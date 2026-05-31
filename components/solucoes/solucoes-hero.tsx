@@ -1,40 +1,56 @@
-"use client";
-
 import Image from "next/image";
+import { Eyebrow } from "@/components/marketing/eyebrow";
+import { Stat } from "@/components/marketing/stat";
+import { archivoSolutionTitle } from "@/lib/fonts/archivo-solution-title";
+import { cn } from "@/lib/utils";
 
 const HERO_WALLPAPER = "/images/wallpapers/wallpaper-5.png";
 
+const HERO_STATS = [
+  { value: "600", suffix: "+", label: "parcelas / safra" },
+  { value: "R$ 5,5", suffix: "Mi", label: "investidos em P&D" },
+  { value: "40", suffix: "%", label: "menos grãos ardidos" },
+] as const;
+
 export function SolucoesHero() {
   return (
-    <section className="relative min-h-[40vh] md:min-h-[50vh] flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0">
+    <section className="container mx-auto max-w-6xl px-4 pt-8 md:pt-12">
+      <div className="relative overflow-hidden rounded-3xl bg-primary px-7 py-14 md:px-16 md:py-20">
         <Image
           src={HERO_WALLPAPER}
           alt=""
           fill
-          className="object-cover object-[center_53%] md:object-[center_51%]"
+          className="object-cover opacity-20"
           priority
-          sizes="100vw"
-          quality={90}
+          sizes="(max-width: 1280px) 100vw, 1240px"
         />
         <div
-          className="absolute inset-0 bg-primary/50 backdrop-blur-xs"
+          className="absolute inset-0 bg-primary/40"
           aria-hidden
         />
-      </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-4xl px-4">
-        <div className="px-6 py-8 text-center sm:px-10 sm:py-10 md:px-12 md:py-12">
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.25rem]">
-            Soluções 250
-            <span className="text-brand-orange dark:text-[hsl(11_58%_58%)]">
-              K
-            </span>
+        <div className="relative max-w-2xl">
+          <Eyebrow onDark>Soluções 250K</Eyebrow>
+          <h1
+            className={cn(
+              archivoSolutionTitle.className,
+              "mt-5 text-4xl leading-[0.98] tracking-tight text-white md:text-6xl",
+            )}
+            style={{ fontVariationSettings: "'wght' 800" }}
+          >
+            Um ecossistema de inteligência agronômica.
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base font-medium leading-relaxed text-white/92 sm:text-lg md:text-xl md:leading-relaxed">
-            Um ecossistema de inteligência agronômica para decisões produtivas
-            no campo
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/80 md:text-xl">
+            Pesquisa, execução e governança trabalhando juntas para transformar
+            dados reais de campo em decisões produtivas — na soja e no milho do
+            norte de Mato Grosso.
           </p>
+
+          <div className="mt-11 flex flex-wrap gap-10">
+            {HERO_STATS.map((stat) => (
+              <Stat key={stat.label} onDark {...stat} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

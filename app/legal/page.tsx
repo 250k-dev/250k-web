@@ -241,7 +241,7 @@ export default function LegalPage() {
                 <a href="mailto:marketing@250k.org" className="text-primary hover:text-brand-orange underline underline-offset-2 transition-colors">
                   marketing@250k.org
                 </a>{" "}
-                com o assunto <em>"LGPD — Solicitação"</em>. Responderemos em até 15 dias úteis.
+                com o assunto <em>&ldquo;LGPD — Solicitação&rdquo;</em>. Responderemos em até 15 dias úteis.
               </p>
 
               <h3 className="font-semibold text-primary">4.4 Transferência internacional</h3>

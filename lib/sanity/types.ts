@@ -63,3 +63,57 @@ export interface PostSlugItem {
   slug: { current: string };
   publishedAt: string;
 }
+
+export interface VideoListItem {
+  _id: string;
+  title: string;
+  slug?: { current: string } | null;
+  excerpt?: string;
+  coverImage?: SanityImage;
+  publishedAt: string;
+  platform: "youtube" | "instagram";
+  youtubeId?: string;
+  externalUrl?: string;
+  duration?: string;
+  category?: { title: string; slug: { current: string } } | null;
+  featured?: boolean;
+}
+
+export interface EventoListItem {
+  _id: string;
+  title: string;
+  slug?: { current: string } | null;
+  excerpt?: string;
+  coverImage?: SanityImage;
+  publishedAt: string;
+  status?: string;
+  dateLabel?: string;
+  place?: string;
+  platform?: "youtube" | "presencial";
+  youtubeId?: string;
+  category?: { title: string; slug: { current: string } } | null;
+}
+
+/** Item normalizado para o feed misto do Hub de Conteúdo. */
+export interface FeedItem {
+  id: string;
+  type: "artigo" | "video" | "evento";
+  title: string;
+  excerpt?: string;
+  category?: string;
+  publishedAt: string;
+  /** Rótulo de data já formatado para exibição. */
+  dateLabel: string;
+  href?: string;
+  coverImage?: SanityImage;
+  featured?: boolean;
+  /** artigo */
+  author?: { name: string; image?: SanityImage };
+  /** video / evento */
+  platform?: "youtube" | "instagram" | "presencial";
+  /** video */
+  duration?: string;
+  /** evento */
+  status?: string;
+  place?: string;
+}

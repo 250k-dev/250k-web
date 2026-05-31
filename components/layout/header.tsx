@@ -21,10 +21,15 @@ const SCROLL_THRESHOLD = 96;
 const nav = [
   { href: "/", label: "Início" },
   { href: "/solucoes", label: "Soluções" },
-  { href: "/eventos", label: "Eventos" },
+  { href: "/blog", label: "Conteúdo" },
   { href: "/sobre", label: "Sobre" },
-  { href: "/blog", label: "Blog" },
 ];
+
+/** Considera ativo também as sub-rotas (ex.: /solucoes/pd-k, /blog/[slug]). */
+function isNavActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function Header() {
   const pathname = usePathname();
@@ -82,7 +87,7 @@ export function Header() {
           aria-label="Navegação principal"
         >
           {nav.map(({ href, label }) => {
-            const isActive = pathname === href;
+            const isActive = isNavActive(pathname, href);
             return (
               <Link
                 key={href}
