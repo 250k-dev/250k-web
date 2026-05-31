@@ -312,3 +312,19 @@
     line-height: 1.2 !important;
   }
 }
+
+.rp-tooltip {
+  background: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  color: #22352d !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 4px 10px !important;
+  white-space: nowrap !important;
+}
+
+.rp-tooltip::before {
+  display: none !important;
+}

@@ -9,8 +9,7 @@ import { Hero } from "@/components/home/hero";
 import { CommoditiesWidget } from "@/components/home/commodities-widget";
 import { ResearchPolesMap } from "@/components/home/research-poles-map";
 import { PartnersCarousel } from "@/components/home/partners-carousel";
-import { CasesJourneyTimeline } from "@/components/home/cases-journey-timeline";
-import { PerformanceProgressChart } from "@/components/home/performance-progress-chart";
+import { CasesJourneyTimelineHorizontal } from "@/components/home/cases-journey-timeline-horizontal";
 import { getCommodities } from "@/lib/commodities";
 import { BigNumbersIntro } from "@/components/home/big-numbers-intro";
 import { PropositoEquation } from "@/components/home/proposito-equation";
@@ -64,19 +63,19 @@ const hubProducts: HubProduct[] = [
     type: "solution",
     href: "/solucoes#pd-k",
     wordmark: "PDK",
-    subtitle: "Pesquisa e Desenvolvimento",
+    subtitle: "Pesquisa & Desenvolvimento",
   },
   {
     type: "solution",
     href: "/solucoes#field-k",
     wordmark: "FieldK",
-    subtitle: "Plano de safra e execução no campo",
+    subtitle: "Recomendação Descomplicada",
   },
   {
     type: "solution",
     href: "/solucoes#finance-k",
     wordmark: "FinanceK",
-    subtitle: "Pool de Compra",
+    subtitle: "Gestão de Compras de Insumos Agrícolas",
   },
   {
     type: "solution",
@@ -109,7 +108,6 @@ export default async function HomePage() {
       <CommoditiesWidget data={commodities} />
 
       <Section
-        title="Nosso propósito"
         subtitle="Transformamos áreas rurais comuns em um verdadeiro sistema produtivo de alta performance"
         variant="wide"
         id="nosso-proposito"
@@ -120,58 +118,42 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* [CASES DE SUCESSO] — título no grid para alinhar o topo da timeline ao H2 */}
       <Section variant="wide">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch lg:gap-x-10 lg:gap-y-6">
-          <div className="flex min-h-0 min-w-0 flex-col gap-6">
-            <div>
-              <h2 className="text-2xl font-bold text-primary md:text-3xl">
-                Cases de sucesso
-              </h2>
-              <p className="mt-2 text-lg text-muted-foreground">
-                Jornada sistêmica para atingir altos tetos de produtividade
-              </p>
-            </div>
-            <div className="space-y-4">
-              <p className="text-muted-foreground leading-relaxed text-lg">
-                Construímos uma jornada sistêmica para sua fazenda atingir altos
-                tetos de produtividade.
-              </p>
-              <p className="text-muted-foreground leading-relaxed text-lg">
-                Onde você recebe o mapa da lucratividade para uma safra de alta
-                performance:
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-border/60 bg-muted/30 p-6">
-              <div className="text-muted-foreground text-sm uppercase tracking-wide">
-                Progressão de performance
-              </div>
-              <PerformanceProgressChart />
-              <p className="mt-3 text-muted-foreground">
-                Progressão de performance de acordo com seu estágio atual para
-                atingirmos toda a área de plantio.
-              </p>
-
-              <div className="mt-6 border-t border-border/60 pt-4">
-                <div className="text-muted-foreground text-xs">
-                  * Indicadores e decisões validados com dados de campo.
-                </div>
-              </div>
-            </div>
+        <div className="flex flex-col gap-8">
+          <div className="space-y-4">
+            <p className="text-muted-foreground leading-relaxed text-lg">
+              Construímos uma jornada sistêmica para sua fazenda atingir altos
+              tetos de produtividade.
+            </p>
+            <p className="text-muted-foreground leading-relaxed text-lg">
+              Onde você recebe o mapa da lucratividade para uma safra de alta
+              performance:
+            </p>
           </div>
 
-          <div className="flex min-h-0 min-w-0 flex-col lg:pl-2">
-            <CasesJourneyTimeline />
+          <div className="rounded-2xl overflow-hidden">
+            <Image
+              src="/images/cards.png"
+              alt="Cards de performance"
+              width={1200}
+              height={800}
+              className="w-full h-auto object-contain"
+            />
           </div>
+
+          <CasesJourneyTimelineHorizontal />
         </div>
       </Section>
 
       {/* [AUTORIDADE] */}
       <Section
-        title="Autoridade"
         afterTitle={
           <div className="space-y-6">
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Somos o maior acervo de informações precisas e sem viés comercial
+              da região norte do estado de Mato Grosso nas culturas de soja e
+              milho.
+            </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Estamos conectados com os maiores players do mercado.
             </p>
@@ -184,28 +166,33 @@ export default async function HomePage() {
       >
         <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
           <div className="space-y-4">
-            <p className="text-muted-foreground leading-relaxed text-lg">
-              Somos o maior acervo de informações precisas e sem viés comercial
-              da região norte do estado de Mato Grosso nas culturas de soja e
-              milho.
-            </p>
             <p className="text-muted-foreground leading-relaxed">
               Em breve, você terá acesso a todas essas informações na 250K
               Academy.
             </p>
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-border/60 bg-background/40 p-6">
+<div className="space-y-3 rounded-2xl border border-border/60 bg-background/40 p-6">
             <div className="text-primary font-semibold">O que sustentamos</div>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
-              <li>4 Pólos de Pesquisa</li>
-              <li>Investimentos superiores a 5.5 MI</li>
-              <li>
-                Divulgações de resultados de pesquisa para transformar incerteza
-                do campo em produtividade
-              </li>
+              <li>4 Pólos de Pesquisas – Com dados extraídos da região norte de Mato Grosso</li>
+              <li>Investimentos superiores a R$ 5.5 MI</li>
+              <li>Domínio dados de pesquisas que transformam incertezas em produtividade.</li>
             </ul>
           </div>
+        </div>
+      </Section>
+
+      {/* Pólos de Pesquisas */}
+      <Section variant="wide">
+        <div className="rounded-2xl overflow-hidden">
+          <Image
+            src="/images/polos-pesquisas.png"
+            alt="Pólos de pesquisas"
+            width={1200}
+            height={800}
+            className="w-full h-auto object-contain"
+          />
         </div>
       </Section>
 
@@ -214,12 +201,11 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-5">
           <div className="mx-auto mb-8 max-w-4xl space-y-3 text-center">
             <h2 className="text-2xl font-bold text-primary md:text-3xl">
-              Um hub de soluções completa para você:
+              Um centro de inteligência agronômica completo para o produtor rural
             </h2>
             <p className="text-lg leading-relaxed text-muted-foreground">
-              PD-K, Field-K, Finance-K, Solo Chec-K, Certifica-K e 250K Academy
-              conectam ciência, decisões e execução para elevar sua
-              produtividade.
+              Unimos e conectamos ciência, decisões estratégicas e execuções
+              para atingir altos tetos de produtividade
             </p>
           </div>
 
@@ -333,25 +319,23 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="mt-10 rounded-2xl border border-border/60 bg-background/40 p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        <div className="mt-10 rounded-2xl border border-border/60 bg-background/40 p-8">
+          <div className="flex flex-col items-center gap-6 text-center">
             <div className="space-y-2">
-              <div className="text-sm text-muted-foreground uppercase">
+              <div className="text-sm text-muted-foreground uppercase tracking-wide">
                 Estamos mudando a realidade de vários produtores:
               </div>
-              <div className="text-2xl md:text-3xl font-bold text-primary">
+              <div className="text-2xl md:text-3xl font-bold text-brand-orange">
                 Transforme a sua fazenda
               </div>
             </div>
-            <div>
-              <Button
-                asChild
-                size="lg"
-                className="bg-accent hover:bg-accent text-accent-foreground shadow-none transition-shadow duration-300 hover:shadow-[0_0_28px_hsl(var(--accent)/0.42)]"
-              >
-                <Link href="/questionario">Clique aqui e saiba mais</Link>
-              </Button>
-            </div>
+            <Button
+              asChild
+              size="lg"
+              className="bg-brand-green hover:bg-brand-green/90 text-white shadow-none transition-shadow duration-300 hover:shadow-[0_0_28px_rgba(34,53,45,0.35)]"
+            >
+              <Link href="/questionario">Clique aqui e saiba mais</Link>
+            </Button>
           </div>
         </div>
       </Section>

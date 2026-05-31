@@ -21,6 +21,7 @@ const SCROLL_THRESHOLD = 96;
 const nav = [
   { href: "/", label: "Início" },
   { href: "/solucoes", label: "Soluções" },
+  { href: "/eventos", label: "Eventos" },
   { href: "/sobre", label: "Sobre" },
   { href: "/blog", label: "Blog" },
 ];

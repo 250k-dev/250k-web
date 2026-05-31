@@ -20,20 +20,35 @@ const archivo = Archivo({
 const COUNT_START = 200;
 const COUNT_END = 250;
 
-function YieldChip({ value, unit }: { value: string; unit: string }) {
+function YieldChip({
+  value,
+  unit,
+  label,
+}: {
+  value: string;
+  unit: string;
+  label?: string;
+}) {
   return (
-    <div className="flex items-baseline gap-1.5">
-      <span
-        className={cn(
-          archivo.className,
-          "tabular-nums text-primary tracking-tight text-2xl sm:text-5xl",
-        )}
-      >
-        {value}
-      </span>
-      <span className="text-sm font-semibold uppercase tracking-wide text-muted-foreground sm:text-sm">
-        {unit}
-      </span>
+    <div className="flex flex-col items-center gap-1">
+      <div className="flex items-baseline gap-1.5">
+        <span
+          className={cn(
+            archivo.className,
+            "tabular-nums text-primary tracking-tight text-2xl sm:text-5xl",
+          )}
+        >
+          {value}
+        </span>
+        <span className="text-sm font-semibold uppercase tracking-wide text-muted-foreground sm:text-sm">
+          {unit}
+        </span>
+      </div>
+      {label && (
+        <span className="text-xs font-bold uppercase tracking-widest text-brand-orange">
+          {label}
+        </span>
+      )}
     </div>
   );
 }
@@ -88,23 +103,31 @@ export function PropositoEquation({ className }: { className?: string }) {
 
   return (
     <figure className={cn("px-5 sm:px-0", className)}>
-      <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-4 sm:gap-x-6">
-        <YieldChip value="85" unit="sc/ha" />
+      <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-4 sm:gap-x-6 rounded-2xl bg-brand-orange/10 px-8 py-6">
+        <YieldChip value="85" unit="sc/ha" label="soja" />
         <Operator>+</Operator>
-        <YieldChip value="165" unit="sc/ha" />
+        <YieldChip value="165" unit="sc/ha" label="milho" />
         <Operator>=</Operator>
-        <span
-          ref={resultRef}
-          className={cn(
-            archivo.className,
-            "inline-flex shrink-0 items-baseline gap-0 tabular-nums tracking-tight",
-            "text-4xl sm:text-7xl",
-          )}
-          aria-label={`Resultado: ${displayValue} mil sacas`}
-        >
-          <span className="text-primary">{displayValue}</span>
-          <span className="text-brand-orange">K</span>
-        </span>
+        <div className="flex flex-col items-center gap-1">
+          <span
+            ref={resultRef}
+            className={cn(
+              archivo.className,
+              "inline-flex shrink-0 items-baseline gap-0 tabular-nums tracking-tight",
+              "text-4xl sm:text-7xl",
+            )}
+            aria-label={`Resultado: ${displayValue} mil sacas por hectare`}
+          >
+            <span className="text-primary">{displayValue}</span>
+            <span className="text-brand-orange">K</span>
+            <span className="text-sm font-semibold uppercase tracking-wide text-muted-foreground sm:text-base self-end mb-1 ml-1">
+              sc/ha
+            </span>
+          </span>
+          <span className="text-xs font-bold uppercase tracking-widest text-brand-orange">
+            a meta
+          </span>
+        </div>
       </div>
 
       <figcaption className="sr-only">

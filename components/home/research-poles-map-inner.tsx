@@ -7,7 +7,7 @@ import {
   useTransform,
 } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 
 import { useDesktop } from "@/lib/use-desktop";
@@ -44,37 +44,21 @@ const LOGO_SVG =
   "</svg>";
 
 function createPinIcon(
-  name: string,
+  isPrimary: boolean,
   motion?: { opacity: number; translateY: number },
 ) {
-  const isPrimary = name === "Sinop (Matriz)";
-  const isAltaFloresta = name === "Alta Floresta";
   const opacity = motion?.opacity ?? 1;
   const translateY = motion?.translateY ?? 0;
 
-  const escaped = name
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
   return new L.DivIcon({
     className: "research-pole-pin-with-label",
     html: `
-      <div style="display: flex; align-items: center; gap: 6px; white-space: nowrap; will-change: transform, opacity; opacity: ${opacity}; transform: translateY(${translateY}px); ${isAltaFloresta ? "margin-top: 12px;" : ""}">
+      <div style="display: inline-flex; will-change: transform, opacity; opacity: ${opacity}; transform: translateY(${translateY}px); filter: ${isPrimary ? "drop-shadow(0 0 4px rgba(177,79,50,0.5))" : "none"};">
         ${LOGO_SVG}
-        <span style="
-          font-size: 11px;
-          font-weight: 600;
-          color: ${isPrimary ? "#B14F32" : "#22352D"};
-          background: white;
-          padding: 2px 6px;
-          border-radius: 4px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-        ">${isPrimary ? "*" : ""}${escaped}</span>
       </div>
     `,
-    iconSize: [120, 30],
-    iconAnchor: [11, 30],
+    iconSize: [20, 28],
+    iconAnchor: [10, 28],
   });
 }
 
@@ -126,9 +110,11 @@ function ScrollDrivenPoleMarker({
     };
   }, [reduceMotion, scrollYProgress, opacityMv, yMv]);
 
+  const isPrimary = pole.name === "Sinop";
+
   const icon = useMemo(
-    () => createPinIcon(pole.name, { opacity: vis.opacity, translateY: vis.ty }),
-    [pole.name, vis.opacity, vis.ty],
+    () => createPinIcon(isPrimary, { opacity: vis.opacity, translateY: vis.ty }),
+    [isPrimary, vis.opacity, vis.ty],
   );
 
   return (
@@ -136,8 +122,17 @@ function ScrollDrivenPoleMarker({
       position={[pole.lat, pole.lng]}
       icon={icon}
       title={pole.name}
-      interactive={false}
-    />
+      interactive
+    >
+      <Tooltip
+        direction="top"
+        offset={[0, -30]}
+        className="rp-tooltip"
+        sticky={false}
+      >
+        {pole.name}
+      </Tooltip>
+    </Marker>
   );
 }
 

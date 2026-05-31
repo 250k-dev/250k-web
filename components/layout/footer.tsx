@@ -3,8 +3,8 @@ import {
   IconBrandLinkedin,
   IconBrandInstagram,
   IconBrandYoutube,
+  IconBrandWhatsapp,
   IconMail,
-  IconPhone,
   IconMapPin,
 } from "@tabler/icons-react";
 import LogoIcon from "@/assets/logo-icon";
@@ -18,21 +18,31 @@ const footerLinks = [
   { href: "/admin", label: "Acesso Administrativo" },
 ];
 
+const legalLinks = [
+  { href: "/legal#privacidade", label: "Política de privacidade" },
+  { href: "/legal#cookies", label: "Política de cookies" },
+  { href: "/legal#termos", label: "Termos de uso" },
+  { href: "/legal#lgpd", label: "LGPD" },
+];
+
 const socials = [
   {
     href: "https://www.linkedin.com/company/250k-agricultura-em-alta-performance",
     label: "LinkedIn",
     icon: IconBrandLinkedin,
+    color: "#0A66C2",
   },
   {
     href: "https://instagram.com/agro250k",
     label: "Instagram",
     icon: IconBrandInstagram,
+    color: "#E1306C",
   },
   {
     href: "https://www.youtube.com/@ConsultoriaPesquisa250k",
     label: "YouTube",
     icon: IconBrandYoutube,
+    color: "#FF0000",
   },
 ];
 
@@ -56,20 +66,9 @@ export function Footer() {
             <p className="text-sm text-primary-foreground/80 max-w-xs">
               Agricultura de Alta Performance
             </p>
-            <div className="flex gap-3 pt-1">
-              {socials.map(({ href, label, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground/80 hover:bg-primary-foreground/20 hover:text-primary-foreground transition-colors"
-                >
-                  <Icon className="h-4 w-4" size={16} />
-                </a>
-              ))}
-            </div>
+            <p className="text-xs text-primary-foreground/60">
+              CNPJ: 60.534.750/0001-75
+            </p>
           </div>
 
           <div>
@@ -98,39 +97,61 @@ export function Footer() {
               <li className="flex items-center gap-2">
                 <IconMail className="h-4 w-4 shrink-0" size={16} />
                 <a
-                  href="mailto:teste@mail.com"
+                  href="mailto:marketing@250k.org"
                   className="text-sm font-medium hover:text-primary-foreground transition-colors"
                 >
-                  teste@mail.com
+                  marketing@250k.org
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <IconPhone className="h-4 w-4 shrink-0" size={16} />
+              <li>
                 <a
-                  href="tel:+5566992206117"
-                  className="hover:text-primary-foreground transition-colors"
+                  href="https://wa.me/5566992206117"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 >
-                  (66) 9.9220-6117
+                  <IconBrandWhatsapp className="h-4 w-4" size={16} />
+                  Fale pelo WhatsApp
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <IconMapPin className="h-4 w-4 shrink-0" size={16} />
                 R. das Leucenas, 74 - St. Comercial, Sinop - MT, 78550-132
               </li>
+              <li className="flex gap-3 pt-1">
+                {socials.map(({ href, label, icon: Icon, color }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/10 transition-all hover:scale-110"
+                    style={{ color }}
+                  >
+                    <Icon className="h-4 w-4" size={16} />
+                  </a>
+                ))}
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-8 border-t border-primary-foreground/20 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-10 pt-8 border-t border-primary-foreground/20 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-sm text-primary-foreground/70">
             © {new Date().getFullYear()} 250k — Consultoria Agrícola
           </p>
-          <Link
-            href="#"
-            className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
-          >
-            Política de privacidade
-          </Link>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+            {legalLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

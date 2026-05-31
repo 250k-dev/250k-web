@@ -96,39 +96,31 @@ export function BigNumbersIntro() {
   return (
     <div
       ref={blockRef}
-      className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
+      className="mb-8 flex flex-col items-center gap-6"
     >
-      <div className="shrink-0 lg:max-w-md lg:pr-8">
-        <h2 className="text-2xl font-bold text-primary md:text-3xl">
-          Big numbers
-        </h2>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Indicadores de influência e atendimento
-        </p>
-      </div>
-      <div className="flex w-full min-w-0 flex-1 flex-wrap content-end items-end justify-between gap-x-4 gap-y-5 sm:gap-x-6 lg:max-w-3xl lg:justify-end lg:gap-x-8 lg:gap-y-0">
-        <div className="min-w-22 flex-1 lg:flex-initial lg:text-right">
-          <div className="text-xs text-muted-foreground uppercase tracking-wide sm:text-sm">
-            Hectares influenciados
-          </div>
-          <div className="text-2xl font-bold text-primary tabular-nums sm:text-3xl">
+      <div className="flex w-full min-w-0 flex-wrap justify-center gap-x-8 gap-y-6 sm:gap-x-12 lg:gap-x-16">
+        <div className="flex flex-col items-center gap-1">
+          <div className="text-4xl font-extrabold text-primary tabular-nums sm:text-5xl">
             {influencedLabel}
           </div>
-        </div>
-        <div className="min-w-22 flex-1 lg:flex-initial lg:text-right">
-          <div className="text-xs text-muted-foreground uppercase tracking-wide sm:text-sm">
-            Hectares atendidos
+          <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground sm:text-sm">
+            Hectares influenciados
           </div>
-          <div className="text-2xl font-bold text-primary tabular-nums sm:text-3xl">
+        </div>
+        <div className="flex flex-col items-center gap-1">
+          <div className="text-4xl font-extrabold text-primary tabular-nums sm:text-5xl">
             {attendedLabel}
           </div>
-        </div>
-        <div className="min-w-22 flex-1 lg:flex-initial lg:text-right">
-          <div className="text-xs text-muted-foreground uppercase tracking-wide sm:text-sm">
-            Clientes ativos
+          <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground sm:text-sm">
+            Hectares atendidos
           </div>
-          <div className="text-2xl font-bold text-primary tabular-nums sm:text-3xl">
+        </div>
+        <div className="flex flex-col items-center gap-1">
+          <div className="text-4xl font-extrabold text-brand-orange tabular-nums sm:text-5xl">
             {clientsLabel}
+          </div>
+          <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground sm:text-sm">
+            Clientes ativos
           </div>
         </div>
       </div>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Conheça a 250k e nossa missão de levar estratégia e resultados para o campo.",
 };
 
-const SOBRE_IMAGE_1 = "/images/analise-solo.jpg";
+const SOBRE_IMAGE_1 = "/images/quem-somos.png";
 const SOBRE_IMAGE_2 = "/images/time-line.png";
 
 export default function SobrePage() {
@@ -17,7 +17,7 @@ export default function SobrePage() {
     <>
       <Section
         title="Sobre a 250k"
-        subtitle="Consultoria agrícola com foco em resultados"
+        subtitle="Inteligência Agronômica junto ao produtor rural"
         variant="wide"
       >
         <div className="mb-16 max-w-3xl">
@@ -43,6 +43,7 @@ export default function SobrePage() {
           title="Quem somos"
           imageSrc={SOBRE_IMAGE_1}
           imageAlt="Campo e agricultura"
+          imageNatural
           content={
             <>
               <p>

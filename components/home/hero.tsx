@@ -100,14 +100,13 @@ export function Hero({ videoSrc = DEFAULT_HERO_VIDEO_URL }: HeroProps) {
       </div>
 
       <div className="relative z-10 isolate container mx-auto px-4 max-w-6xl text-center flex-1 flex flex-col items-center justify-center [text-shadow:0_1px_2px_rgb(0_0_0/0.45)]">
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight uppercase">
-          Direcionamos a sua fazenda para atingir
-          <span className="bg-accent text-accent-foreground px-2 py-0.5 md:px-3 md:py-1 rounded whitespace-nowrap ml-2 text-shadow-none">
-            altos tetos
-          </span>{" "}
-          de{" "}
-          <span className="bg-accent text-accent-foreground px-2 py-0.5 md:px-3 md:py-1 rounded whitespace-nowrap text-shadow-none">
-            produtividade
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase max-w-6xl">
+          <span className="block">Direcionamos a sua fazenda para atingir</span>
+          <span className="block">
+            <span className="bg-accent text-accent-foreground px-2 py-0.5 md:px-3 md:py-1 rounded text-shadow-none">
+              altos tetos
+            </span>{" "}
+            de produtividade
           </span>
         </h1>
         <p className="mt-6 text-lg md:text-xl text-white/95 max-w-2xl mx-auto">
@@ -117,11 +116,14 @@ export function Hero({ videoSrc = DEFAULT_HERO_VIDEO_URL }: HeroProps) {
           <Button
             asChild
             size="lg"
-            className="h-16 px-10 rounded-xl bg-accent hover:bg-accent! text-accent-foreground font-black text-xl uppercase tracking-tight border-b-4 border-orange-900 active:border-b-0 shadow-none transition-all duration-300 hover:shadow-[0_0_28px_hsl(var(--accent)/0.42)]"
+            className="h-18 px-10 rounded-xl bg-accent hover:bg-accent! text-accent-foreground font-black text-xl uppercase tracking-tight border-b-4 border-orange-900 active:border-b-0 shadow-none transition-all duration-300 hover:shadow-[0_0_28px_hsl(var(--accent)/0.42)]"
           >
             <Link href="/questionario">Sua Fazenda é produtiva?</Link>
           </Button>
         </div>
+        <p className="mt-6 text-lg md:text-base text-white/95 max-w-2xl mx-auto">
+          Responda o nosso diagnóstico e saiba na hora!
+        </p>
       </div>
 
       <button
