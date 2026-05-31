@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { sanityClient } from "@/lib/sanity/client";
 import { POST_SLUGS_QUERY } from "@/lib/sanity/queries";
 import type { PostSlugItem } from "@/lib/sanity/types";
+import { SOLUCOES } from "@/lib/solucoes/data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://250k.com.br";
 
@@ -10,6 +11,12 @@ const staticRoutes: MetadataRoute.Sitemap = [
   { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
   { url: `${BASE_URL}/sobre`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
   { url: `${BASE_URL}/solucoes`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+  ...SOLUCOES.map((s) => ({
+    url: `${BASE_URL}/solucoes/${s.id}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  })),
   { url: `${BASE_URL}/contato`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
 ];
 
