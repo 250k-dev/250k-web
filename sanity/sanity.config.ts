@@ -1,3 +1,4 @@
+import { ptBRLocale } from "@sanity/locale-pt-br";
 import { buildTheme } from "@sanity/ui/theme";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
@@ -27,7 +28,7 @@ export default defineConfig({
   projectId,
   dataset,
   basePath: "/admin/studio",
-  plugins: [structureTool()],
+  plugins: [structureTool(), ptBRLocale()],
   schema: {
     types: schemaTypes,
   },

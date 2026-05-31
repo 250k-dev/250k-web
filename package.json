@@ -23,6 +23,7 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@sanity/client": "^7.16.0",
     "@sanity/image-url": "^2.0.3",
+    "@sanity/locale-pt-br": "^1.1.32",
     "@sanity/ui": "^3.1.11",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.98.0",
