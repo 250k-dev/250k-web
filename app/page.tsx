@@ -13,6 +13,7 @@ import { CasesJourneyTimelineHorizontal } from "@/components/home/cases-journey-
 import { getCommodities } from "@/lib/commodities";
 import { BigNumbersIntro } from "@/components/home/big-numbers-intro";
 import { PropositoEquation } from "@/components/home/proposito-equation";
+import { LoyaltyCards } from "@/components/home/loyalty-cards";
 
 const hubCardFooterCopyClass =
   "text-center text-sm font-semibold leading-snug text-primary";
@@ -131,15 +132,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="rounded-2xl overflow-hidden">
-            <Image
-              src="/images/cards.png"
-              alt="Cards de performance"
-              width={1200}
-              height={800}
-              className="w-full h-auto object-contain"
-            />
-          </div>
+          <LoyaltyCards />
 
           <CasesJourneyTimelineHorizontal />
         </div>
@@ -172,12 +165,18 @@ export default async function HomePage() {
             </p>
           </div>
 
-<div className="space-y-3 rounded-2xl border border-border/60 bg-background/40 p-6">
+          <div className="space-y-3 rounded-2xl border border-border/60 bg-background/40 p-6">
             <div className="text-primary font-semibold">O que sustentamos</div>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
-              <li>4 Pólos de Pesquisas – Com dados extraídos da região norte de Mato Grosso</li>
+              <li>
+                4 Pólos de Pesquisas – Com dados extraídos da região norte de
+                Mato Grosso
+              </li>
               <li>Investimentos superiores a R$ 5.5 MI</li>
-              <li>Domínio dados de pesquisas que transformam incertezas em produtividade.</li>
+              <li>
+                Domínio dados de pesquisas que transformam incertezas em
+                produtividade.
+              </li>
             </ul>
           </div>
         </div>
@@ -201,7 +200,8 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-5">
           <div className="mx-auto mb-8 max-w-4xl space-y-3 text-center">
             <h2 className="text-2xl font-bold text-primary md:text-3xl">
-              Um centro de inteligência agronômica completo para o produtor rural
+              Um centro de inteligência agronômica completo para o produtor
+              rural
             </h2>
             <p className="text-lg leading-relaxed text-muted-foreground">
               Unimos e conectamos ciência, decisões estratégicas e execuções

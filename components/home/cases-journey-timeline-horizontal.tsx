@@ -73,7 +73,7 @@ const STEPS: Step[] = [
  * cy alterna entre 38 (acima) e 62 (abaixo) para criar a curva serpentina.
  */
 const NODE_POSITIONS: ReadonlyArray<{ cx: number; cy: number }> = [
-  { cx: 52,  cy: 50 },
+  { cx: 52, cy: 50 },
   { cx: 148, cy: 62 },
   { cx: 258, cy: 38 },
   { cx: 368, cy: 62 },
@@ -237,7 +237,11 @@ function TimelineStepItem({
   const tEnd = tStart + 0.11;
   const opacity = useTransform(scrollXProgress, [tStart, tEnd], [0, 1]);
   const x = useTransform(scrollXProgress, [tStart, tStart + 0.07], [18, 0]);
-  const barScale = useTransform(scrollXProgress, [tStart + 0.04, tEnd], [0.08, 1]);
+  const barScale = useTransform(
+    scrollXProgress,
+    [tStart + 0.04, tEnd],
+    [0.08, 1],
+  );
 
   const contentInner = (
     <div
@@ -310,7 +314,11 @@ function TimelineStepItem({
   );
 
   const wrapMotion = (node: ReactNode) =>
-    reduceMotion ? node : <motion.div style={{ opacity, x }}>{node}</motion.div>;
+    reduceMotion ? (
+      node
+    ) : (
+      <motion.div style={{ opacity, x }}>{node}</motion.div>
+    );
 
   return (
     <li className="grid grid-rows-[1fr_5rem_1fr] items-center justify-items-center">
@@ -352,7 +360,7 @@ export function CasesJourneyTimelineHorizontal() {
   return (
     <div
       ref={containerRef}
-      className="relative mx-auto flex w-full flex-col py-0"
+      className="relative mx-auto flex w-full flex-col py-0 pt-24"
     >
       {/* trilho horizontal */}
       <div
@@ -368,7 +376,9 @@ export function CasesJourneyTimelineHorizontal() {
 
       <ol
         className="relative z-10 grid w-full"
-        style={{ gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))` }}
+        style={{
+          gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))`,
+        }}
         aria-label="Jornada em etapas"
       >
         {STEPS.map((step, index) => (
