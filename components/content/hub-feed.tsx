@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ContentCard } from "@/components/content/content-card";
+import { FeaturedCarousel } from "@/components/content/featured-carousel";
 import type { FeedItem } from "@/lib/sanity/types";
 import { cn } from "@/lib/utils";
 
@@ -42,21 +43,23 @@ export function HubFeed({ items }: { items: FeedItem[] }) {
     [items],
   );
 
-  const featured = useMemo(
-    () =>
-      items.find((i) => i.featured) ??
-      items.find((i) => i.type === "artigo") ??
-      items[0],
-    [items],
-  );
+  // Destaques vigentes (marcados e dentro da janela de datas). Fallback: artigo/1º item.
+  const featuredItems = useMemo(() => {
+    const flagged = items.filter((i) => i.featured);
+    if (flagged.length > 0) return flagged;
+    const fallback = items.find((i) => i.type === "artigo") ?? items[0];
+    return fallback ? [fallback] : [];
+  }, [items]);
 
-  const showFeatured = filter === "tudo" && Boolean(featured);
+  const showFeatured = filter === "tudo" && featuredItems.length > 0;
 
   const list = useMemo(() => {
     const base =
       filter === "tudo" ? items : items.filter((i) => i.type === filter);
-    return showFeatured ? base.filter((i) => i.id !== featured.id) : base;
-  }, [items, filter, showFeatured, featured]);
+    if (!showFeatured) return base;
+    const featuredIds = new Set(featuredItems.map((i) => i.id));
+    return base.filter((i) => !featuredIds.has(i.id));
+  }, [items, filter, showFeatured, featuredItems]);
 
   const setFilter = useCallback(
     (next: Filter) => {
@@ -71,15 +74,11 @@ export function HubFeed({ items }: { items: FeedItem[] }) {
     [router, pathname, searchParams],
   );
 
-  const total = list.length + (showFeatured ? 1 : 0);
+  const total = list.length + (showFeatured ? featuredItems.length : 0);
 
   return (
     <>
-      {showFeatured && (
-        <div className="mt-10">
-          <ContentCard item={featured} featured />
-        </div>
-      )}
+      {showFeatured && <FeaturedCarousel items={featuredItems} />}
 
       {/* Filterbar */}
       <div className="sticky top-12 z-30 mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-border bg-background/90 py-4 backdrop-blur supports-backdrop-filter:bg-background/75">

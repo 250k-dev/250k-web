@@ -13,6 +13,7 @@ import LogoLabel from "@/assets/logo-label";
 const footerLinks = [
   { href: "/sobre", label: "Sobre" },
   { href: "/solucoes", label: "Soluções" },
+  { href: "/treinamentos", label: "Treinamentos" },
   { href: "/blog", label: "Conteúdo" },
   { href: "/contato", label: "Contato" },
   { href: "/admin", label: "Acesso Administrativo" },

@@ -7,7 +7,6 @@ import { BrandName } from "@/components/marketing/brand-name";
 import { LinkArrow } from "@/components/marketing/link-arrow";
 import { SolCta } from "@/components/solucoes/sol-cta";
 import { archivoSolutionTitle } from "@/lib/fonts/archivo-solution-title";
-import { whatsappUrl } from "@/lib/whatsapp";
 import type { Solucao } from "@/lib/solucoes/data";
 import { cn } from "@/lib/utils";
 
@@ -82,14 +81,6 @@ export function SolucaoDetail({
                 <IconArrowRight className="size-4" stroke={2.2} />
               </Link>
             )}
-            <Link
-              href={whatsappUrl(`Olá! Tenho interesse na solução ${plainName}.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3.5 text-sm font-bold text-foreground transition-colors hover:border-foreground"
-            >
-              Ver no WhatsApp
-            </Link>
           </div>
         </div>
 

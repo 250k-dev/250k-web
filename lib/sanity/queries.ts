@@ -7,7 +7,10 @@ const POSTS_LIST_PROJECTION = `{
   publishedAt,
   "author": author->{ name, image },
   "category": category->{ title, "slug": slug },
-  featured
+  videoUrl,
+  featured,
+  featuredFrom,
+  featuredUntil
 }`;
 
 export const POSTS_LIST_QUERY = `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) [$offset...$limit] ${POSTS_LIST_PROJECTION}`;
@@ -29,6 +32,7 @@ export const POST_BY_SLUG_QUERY = `*[_type == "post" && slug.current == $slug][0
   "author": author->{ _id, name, "slug": slug, image, bio },
   "category": category->{ _id, title, "slug": slug },
   body,
+  videoUrl,
   metaTitle,
   metaDescription
 }`;
@@ -48,12 +52,12 @@ const VIDEOS_LIST_PROJECTION = `{
   excerpt,
   coverImage,
   publishedAt,
-  platform,
-  youtubeId,
-  externalUrl,
+  videoUrl,
   duration,
   "category": category->{ title, "slug": slug },
-  featured
+  featured,
+  featuredFrom,
+  featuredUntil
 }`;
 
 export const VIDEOS_LIST_QUERY = `*[_type == "video"] | order(publishedAt desc) ${VIDEOS_LIST_PROJECTION}`;
@@ -68,12 +72,35 @@ const EVENTOS_LIST_PROJECTION = `{
   status,
   dateLabel,
   place,
-  platform,
-  youtubeId,
-  "category": category->{ title, "slug": slug }
+  videoUrl,
+  "category": category->{ title, "slug": slug },
+  featured,
+  featuredFrom,
+  featuredUntil
 }`;
 
 export const EVENTOS_LIST_QUERY = `*[_type == "evento"] | order(publishedAt desc) ${EVENTOS_LIST_PROJECTION}`;
+
+export const EVENTO_BY_SLUG_QUERY = `*[_type == "evento" && slug.current == $slug][0] {
+  _id,
+  _type,
+  title,
+  "slug": slug,
+  excerpt,
+  coverImage,
+  publishedAt,
+  status,
+  dateLabel,
+  place,
+  videoUrl,
+  body,
+  "category": category->{ title, "slug": slug }
+}`;
+
+export const EVENTO_SLUGS_QUERY = `*[_type == "evento" && defined(slug.current)] {
+  "slug": slug,
+  publishedAt
+}`;
 
 /** Feed do Hub: todos os artigos para mesclar com vídeos e eventos. */
 export const POSTS_FEED_QUERY = `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) ${POSTS_LIST_PROJECTION}`;

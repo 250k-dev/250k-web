@@ -4,11 +4,13 @@ import {
   VIDEOS_LIST_QUERY,
   EVENTOS_LIST_QUERY,
 } from "@/lib/sanity/queries";
+import { parseVideoUrl } from "@/lib/video";
 import type {
   PostListItem,
   VideoListItem,
   EventoListItem,
   FeedItem,
+  FeaturedFields,
 } from "@/lib/sanity/types";
 
 function formatDate(iso: string): string {
@@ -19,7 +21,25 @@ function formatDate(iso: string): string {
   });
 }
 
-export function postToFeedItem(post: PostListItem): FeedItem {
+/**
+ * Destaque vigente: o toggle precisa estar ligado e, se houver janela de datas,
+ * o momento atual deve estar dentro dela.
+ */
+export function isCurrentlyFeatured(
+  item: FeaturedFields,
+  now: number = Date.now(),
+): boolean {
+  if (!item.featured) return false;
+  if (item.featuredFrom && now < new Date(item.featuredFrom).getTime()) {
+    return false;
+  }
+  if (item.featuredUntil && now > new Date(item.featuredUntil).getTime()) {
+    return false;
+  }
+  return true;
+}
+
+export function postToFeedItem(post: PostListItem, now?: number): FeedItem {
   return {
     id: post._id,
     type: "artigo",
@@ -30,21 +50,15 @@ export function postToFeedItem(post: PostListItem): FeedItem {
     dateLabel: formatDate(post.publishedAt),
     href: `/blog/${post.slug.current}`,
     coverImage: post.coverImage,
-    featured: post.featured,
+    featured: isCurrentlyFeatured(post, now),
     author: post.author
       ? { name: post.author.name, image: post.author.image }
       : undefined,
   };
 }
 
-function videoHref(video: VideoListItem): string | undefined {
-  if (video.platform === "youtube" && video.youtubeId) {
-    return `https://www.youtube.com/watch?v=${video.youtubeId}`;
-  }
-  return video.externalUrl;
-}
-
-export function videoToFeedItem(video: VideoListItem): FeedItem {
+export function videoToFeedItem(video: VideoListItem, now?: number): FeedItem {
+  const parsed = parseVideoUrl(video.videoUrl);
   return {
     id: video._id,
     type: "video",
@@ -53,19 +67,20 @@ export function videoToFeedItem(video: VideoListItem): FeedItem {
     category: video.category?.title,
     publishedAt: video.publishedAt,
     dateLabel: formatDate(video.publishedAt),
-    href: videoHref(video),
+    href: parsed?.watchUrl,
     coverImage: video.coverImage,
-    featured: video.featured,
-    platform: video.platform,
+    thumbnailUrl: video.coverImage ? undefined : parsed?.thumbnailUrl,
+    featured: isCurrentlyFeatured(video, now),
+    platform: parsed?.platform === "instagram" ? "instagram" : "youtube",
     duration: video.duration,
   };
 }
 
-export function eventoToFeedItem(evento: EventoListItem): FeedItem {
-  const href =
-    evento.platform === "youtube" && evento.youtubeId
-      ? `https://www.youtube.com/watch?v=${evento.youtubeId}`
-      : undefined;
+export function eventoToFeedItem(
+  evento: EventoListItem,
+  now?: number,
+): FeedItem {
+  const parsed = parseVideoUrl(evento.videoUrl);
   return {
     id: evento._id,
     type: "evento",
@@ -74,9 +89,16 @@ export function eventoToFeedItem(evento: EventoListItem): FeedItem {
     category: evento.category?.title ?? "Evento",
     publishedAt: evento.publishedAt,
     dateLabel: evento.dateLabel ?? formatDate(evento.publishedAt),
-    href,
+    href: evento.slug?.current ? `/eventos/${evento.slug.current}` : undefined,
     coverImage: evento.coverImage,
-    platform: evento.platform === "youtube" ? "youtube" : "presencial",
+    thumbnailUrl: evento.coverImage ? undefined : parsed?.thumbnailUrl,
+    featured: isCurrentlyFeatured(evento, now),
+    // Vídeo gravado → mostra a plataforma; senão, evento presencial.
+    platform: parsed
+      ? parsed.platform === "instagram"
+        ? "instagram"
+        : "youtube"
+      : "presencial",
     status: evento.status,
     place: evento.place,
   };
@@ -84,6 +106,7 @@ export function eventoToFeedItem(evento: EventoListItem): FeedItem {
 
 /** Busca artigos, vídeos e eventos e devolve um feed único ordenado por data desc. */
 export async function getFeed(): Promise<FeedItem[]> {
+  const now = Date.now();
   const [posts, videos, eventos] = await Promise.all([
     sanityClient.fetch<PostListItem[]>(POSTS_FEED_QUERY),
     sanityClient.fetch<VideoListItem[]>(VIDEOS_LIST_QUERY),
@@ -91,9 +114,9 @@ export async function getFeed(): Promise<FeedItem[]> {
   ]);
 
   return [
-    ...posts.map(postToFeedItem),
-    ...videos.map(videoToFeedItem),
-    ...eventos.map(eventoToFeedItem),
+    ...posts.map((p) => postToFeedItem(p, now)),
+    ...videos.map((v) => videoToFeedItem(v, now)),
+    ...eventos.map((e) => eventoToFeedItem(e, now)),
   ].sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),

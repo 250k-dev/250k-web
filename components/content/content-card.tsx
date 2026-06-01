@@ -76,6 +76,14 @@ export function ContentCard({
           className="object-cover"
           sizes={featured ? "(max-width: 768px) 100vw, 640px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
         />
+      ) : item.thumbnailUrl ? (
+        <Image
+          src={item.thumbnailUrl}
+          alt=""
+          fill
+          className="object-cover"
+          sizes={featured ? "(max-width: 768px) 100vw, 640px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
+        />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-muted via-muted to-accent/20">
           <div className="rounded-xl bg-white/40 p-4 backdrop-blur-sm">
@@ -169,10 +177,16 @@ export function ContentCard({
 
         {item.type === "artigo" ? (
           <LinkArrow className="text-sm">Ler</LinkArrow>
+        ) : isEvento ? (
+          item.href ? (
+            <LinkArrow className="text-sm">Ver evento</LinkArrow>
+          ) : (
+            <span className="text-muted-foreground">
+              {item.place ?? item.dateLabel}
+            </span>
+          )
         ) : (
-          <span className="text-muted-foreground">
-            {isEvento ? item.place ?? item.dateLabel : item.dateLabel}
-          </span>
+          <span className="text-muted-foreground">{item.dateLabel}</span>
         )}
       </div>
     </div>
@@ -183,8 +197,8 @@ export function ContentCard({
     featured ? "flex-col md:flex-row" : "flex-col",
   );
 
-  // Artigo → rota interna; vídeo/evento com href → link externo; senão, estático.
-  if (item.type === "artigo" && item.href) {
+  // href interno (começa com "/") → rota interna; href externo → nova aba; senão estático.
+  if (item.href?.startsWith("/")) {
     return (
       <Link href={item.href} className={cardClass}>
         {media}

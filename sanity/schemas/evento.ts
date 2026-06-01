@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { videoUrlField, featuredFields } from "./shared-fields";
 
 export const eventoType = defineType({
   name: "evento",
@@ -19,6 +20,8 @@ export const eventoType = defineType({
         source: "title",
         maxLength: 96,
       },
+      description: "Usado no endereço da página do evento (/eventos/slug).",
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "status",
@@ -51,31 +54,19 @@ export const eventoType = defineType({
       type: "string",
       description: 'Ex.: "Sinop · MT".',
     }),
-    defineField({
-      name: "platform",
-      title: "Plataforma",
-      type: "string",
-      options: {
-        list: [
-          { title: "YouTube", value: "youtube" },
-          { title: "Presencial", value: "presencial" },
-        ],
-        layout: "radio",
-      },
-      initialValue: "presencial",
-    }),
-    defineField({
-      name: "youtubeId",
-      title: "ID do YouTube",
-      type: "string",
-      description: "Apenas o ID do vídeo, quando houver gravação disponível.",
-      hidden: ({ parent }) => parent?.platform !== "youtube",
-    }),
+    videoUrlField,
     defineField({
       name: "coverImage",
       title: "Imagem",
       type: "image",
       options: { hotspot: true },
+    }),
+    defineField({
+      name: "body",
+      title: "Conteúdo",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Descrição completa do evento (exibida na página do evento).",
     }),
     defineField({
       name: "category",
@@ -90,6 +81,7 @@ export const eventoType = defineType({
       initialValue: () => new Date().toISOString(),
       validation: (Rule) => Rule.required(),
     }),
+    ...featuredFields,
   ],
   preview: {
     select: {

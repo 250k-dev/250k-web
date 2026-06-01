@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { videoUrlField, featuredFields } from "./shared-fields";
 
 export const postType = defineType({
   name: "post",
@@ -62,13 +63,8 @@ export const postType = defineType({
       of: [{ type: "block" }],
       description: "Conteúdo do post em português.",
     }),
-    defineField({
-      name: "featured",
-      title: "Destaque",
-      type: "boolean",
-      initialValue: false,
-      description: "Marcar para destacar na listagem.",
-    }),
+    videoUrlField,
+    ...featuredFields,
     defineField({
       name: "metaTitle",
       title: "Título (SEO)",

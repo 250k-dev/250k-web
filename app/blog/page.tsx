@@ -4,6 +4,9 @@ import { Eyebrow } from "@/components/marketing/eyebrow";
 import { HubFeed } from "@/components/content/hub-feed";
 import { getFeed } from "@/lib/content/feed";
 
+// Revalida periodicamente para refletir novas publicações e janelas de destaque.
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Conteúdo",
   description:

@@ -31,7 +31,14 @@ export interface Category {
   slug: SanitySlug;
 }
 
-export interface Post {
+/** Campos de destaque compartilhados entre os tipos de conteúdo. */
+export interface FeaturedFields {
+  featured?: boolean;
+  featuredFrom?: string;
+  featuredUntil?: string;
+}
+
+export interface Post extends FeaturedFields {
   _id: string;
   _type: "post";
   title: string;
@@ -42,12 +49,12 @@ export interface Post {
   author?: Author | null;
   category?: Category | null;
   body?: PortableTextBlock[];
-  featured?: boolean;
+  videoUrl?: string;
   metaTitle?: string;
   metaDescription?: string;
 }
 
-export interface PostListItem {
+export interface PostListItem extends FeaturedFields {
   _id: string;
   title: string;
   slug: { current: string };
@@ -56,7 +63,7 @@ export interface PostListItem {
   publishedAt: string;
   author?: { name: string; image?: SanityImage } | null;
   category?: { title: string; slug: { current: string } } | null;
-  featured?: boolean;
+  videoUrl?: string;
 }
 
 export interface PostSlugItem {
@@ -64,22 +71,19 @@ export interface PostSlugItem {
   publishedAt: string;
 }
 
-export interface VideoListItem {
+export interface VideoListItem extends FeaturedFields {
   _id: string;
   title: string;
   slug?: { current: string } | null;
   excerpt?: string;
   coverImage?: SanityImage;
   publishedAt: string;
-  platform: "youtube" | "instagram";
-  youtubeId?: string;
-  externalUrl?: string;
+  videoUrl: string;
   duration?: string;
   category?: { title: string; slug: { current: string } } | null;
-  featured?: boolean;
 }
 
-export interface EventoListItem {
+export interface EventoListItem extends FeaturedFields {
   _id: string;
   title: string;
   slug?: { current: string } | null;
@@ -89,8 +93,23 @@ export interface EventoListItem {
   status?: string;
   dateLabel?: string;
   place?: string;
-  platform?: "youtube" | "presencial";
-  youtubeId?: string;
+  videoUrl?: string;
+  category?: { title: string; slug: { current: string } } | null;
+}
+
+export interface Evento extends FeaturedFields {
+  _id: string;
+  _type: "evento";
+  title: string;
+  slug: SanitySlug;
+  excerpt?: string;
+  coverImage?: SanityImage;
+  publishedAt: string;
+  status?: string;
+  dateLabel?: string;
+  place?: string;
+  videoUrl?: string;
+  body?: PortableTextBlock[];
   category?: { title: string; slug: { current: string } } | null;
 }
 
@@ -106,6 +125,8 @@ export interface FeedItem {
   dateLabel: string;
   href?: string;
   coverImage?: SanityImage;
+  /** Miniatura externa (ex.: thumbnail do YouTube) usada quando não há coverImage. */
+  thumbnailUrl?: string;
   featured?: boolean;
   /** artigo */
   author?: { name: string; image?: SanityImage };

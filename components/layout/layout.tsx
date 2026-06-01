@@ -21,6 +21,7 @@ const TOP_LEVEL_ROUTES = [
   "questionario",
   "legal",
   "eventos",
+  "treinamentos",
   "admin",
   "studio",
 ];

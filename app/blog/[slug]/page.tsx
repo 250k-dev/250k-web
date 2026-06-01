@@ -5,6 +5,7 @@ import Link from "next/link";
 import { IconArrowLeft, IconClock } from "@tabler/icons-react";
 import { Eyebrow } from "@/components/marketing/eyebrow";
 import { ContentCard } from "@/components/content/content-card";
+import { VideoEmbed } from "@/components/content/video-embed";
 import { PortableText } from "@/components/blog/portable-text";
 import { sanityClient } from "@/lib/sanity/client";
 import { POST_BY_SLUG_QUERY, RELATED_POSTS_QUERY } from "@/lib/sanity/queries";
@@ -181,6 +182,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             />
           </div>
         )}
+
+        {/* Vídeo (opcional) */}
+        <VideoEmbed url={post.videoUrl} title={post.title} />
 
         {/* Corpo */}
         <div className="mt-10">

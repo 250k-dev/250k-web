@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { videoUrlField, featuredFields } from "./shared-fields";
 
 export const videoType = defineType({
   name: "video",
@@ -20,39 +21,17 @@ export const videoType = defineType({
         maxLength: 96,
       },
     }),
-    defineField({
-      name: "platform",
-      title: "Plataforma",
-      type: "string",
-      options: {
-        list: [
-          { title: "YouTube", value: "youtube" },
-          { title: "Instagram (Reels)", value: "instagram" },
-        ],
-        layout: "radio",
-      },
-      initialValue: "youtube",
+    {
+      ...videoUrlField,
       validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "youtubeId",
-      title: "ID do YouTube",
-      type: "string",
-      description: "Apenas o ID do vídeo (ex.: dvgpLyrzd2o). Usado para embed quando a plataforma é YouTube.",
-      hidden: ({ parent }) => parent?.platform !== "youtube",
-    }),
-    defineField({
-      name: "externalUrl",
-      title: "URL externa",
-      type: "url",
-      description: "Link do Reels/vídeo externo (ex.: Instagram). Usado quando não há embed nativo.",
-      hidden: ({ parent }) => parent?.platform === "youtube",
-    }),
+    },
     defineField({
       name: "coverImage",
       title: "Thumbnail",
       type: "image",
       options: { hotspot: true },
+      description:
+        "Opcional. Se vazio, o front usa a miniatura do próprio vídeo quando disponível.",
     }),
     defineField({
       name: "duration",
@@ -79,29 +58,21 @@ export const videoType = defineType({
       initialValue: () => new Date().toISOString(),
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: "featured",
-      title: "Destaque",
-      type: "boolean",
-      initialValue: false,
-      description: "Marcar para destacar no Hub de Conteúdo.",
-    }),
+    ...featuredFields,
   ],
   preview: {
     select: {
       title: "title",
       media: "coverImage",
       publishedAt: "publishedAt",
-      platform: "platform",
     },
-    prepare({ title, media, publishedAt, platform }) {
+    prepare({ title, media, publishedAt }) {
       const date = publishedAt
         ? new Date(publishedAt).toLocaleDateString("pt-BR")
         : "";
-      const label = platform === "instagram" ? "Reels" : "YouTube";
       return {
         title: title ?? "Vídeo",
-        subtitle: [label, date].filter(Boolean).join(" · "),
+        subtitle: ["Vídeo", date].filter(Boolean).join(" · "),
         media,
       };
     },
