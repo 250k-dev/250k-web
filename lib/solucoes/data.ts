@@ -61,20 +61,16 @@ export interface SolucaoDetail {
 
 export interface Solucao {
   id: string;
-  /** Nome com a marca; o "K" final é destacado em laranja na renderização. */
   name: string;
   idLabel: string;
   tagline: string;
-  /** Descrição curta para o card da listagem. */
   desc: string;
-  /** Até 3 destaques para o card. */
   features: string[];
   imageSrc: string;
   imageAlt: string;
-  /** Vídeo (YouTube ID) usado no hero do detalhe no lugar da imagem. */
   video?: string;
-  /** Vídeo no formato vertical (9/16). */
   videoVertical?: boolean;
+  externalUrl?: string;
   detail: SolucaoDetail;
 }
 

@@ -27,64 +27,67 @@ export function SolucaoDetail({
   const primaryCta = detail.cta;
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-10 md:py-14">
+    <div className="container mx-auto min-w-0 max-w-6xl px-4 pb-8 pt-4 sm:px-5 sm:pb-10 sm:pt-6 md:pb-14 md:pt-8">
       {/* Top */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <Link
           href="/solucoes"
-          className="group inline-flex items-center gap-2 text-sm font-bold text-foreground transition-colors hover:text-brand-orange"
+          className="group inline-flex min-w-0 items-center gap-2 text-sm font-bold text-foreground transition-colors hover:text-brand-orange"
         >
-          <IconArrowLeft className="size-4" stroke={2.2} />
-          Todas as soluções
+          <IconArrowLeft className="size-4 shrink-0" stroke={2.2} />
+          <span className="truncate">Todas as soluções</span>
         </Link>
-        <Eyebrow plain className="text-muted-foreground">
+        <Eyebrow
+          plain
+          className="shrink-0 self-start whitespace-normal text-muted-foreground sm:self-auto"
+        >
           Ecossistema 250K
         </Eyebrow>
       </div>
 
       {/* Hero */}
-      <section className="mt-8 grid items-center gap-10 md:mt-12 md:grid-cols-[1.05fr_0.95fr] md:gap-14">
-        <div>
-          <Eyebrow>{solucao.idLabel}</Eyebrow>
+      <section className="mt-6 grid min-w-0 items-center gap-8 sm:mt-8 md:mt-12 md:grid-cols-[1.05fr_0.95fr] md:gap-14">
+        <div className="min-w-0 order-2 md:order-1">
+          <Eyebrow className="whitespace-normal">{solucao.idLabel}</Eyebrow>
           <h1
             className={cn(
               displayFont.className,
-              "mt-4 text-5xl leading-[0.96] tracking-tight text-primary md:text-7xl",
+              "mt-3 break-words text-3xl leading-[0.98] tracking-tight text-primary sm:mt-4 sm:text-4xl md:text-5xl lg:text-7xl",
             )}
             style={displayFont.style}
           >
             <BrandName name={solucao.name} />
           </h1>
-          <p className="mt-5 text-xl font-bold text-primary md:text-2xl">
+          <p className="mt-4 text-lg font-bold leading-snug text-primary sm:mt-5 sm:text-xl md:text-2xl">
             {solucao.tagline}
           </p>
-          <p className="mt-4 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:mt-4 sm:text-lg">
             {detail.lead}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
             {primaryCta ? (
               <Link
                 href={primaryCta.href}
                 target={primaryCta.external ? "_blank" : undefined}
                 rel={primaryCta.external ? "noopener noreferrer" : undefined}
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-3.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90 sm:w-auto sm:px-6"
               >
                 {primaryCta.label}
-                <IconArrowRight className="size-4" stroke={2.2} />
+                <IconArrowRight className="size-4 shrink-0" stroke={2.2} />
               </Link>
             ) : (
               <Link
                 href="/contato"
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-3.5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90 sm:w-auto sm:px-6"
               >
                 Falar com um consultor
-                <IconArrowRight className="size-4" stroke={2.2} />
+                <IconArrowRight className="size-4 shrink-0" stroke={2.2} />
               </Link>
             )}
           </div>
         </div>
 
-        <div className="relative aspect-4/5 overflow-hidden rounded-3xl bg-muted shadow-lg">
+        <div className="relative order-1 min-w-0 aspect-video overflow-hidden rounded-2xl bg-muted shadow-lg sm:rounded-3xl md:order-2 md:aspect-4/5">
           {solucao.video ? (
             <iframe
               src={`https://www.youtube.com/embed/${solucao.video}`}
@@ -108,9 +111,12 @@ export function SolucaoDetail({
 
       {/* Intro paras */}
       {detail.paras.length > 0 && (
-        <section className="mt-14 max-w-[760px] space-y-5 md:mt-20">
+        <section className="mt-10 min-w-0 max-w-[760px] space-y-4 sm:mt-14 sm:space-y-5 md:mt-20">
           {detail.paras.map((para, i) => (
-            <p key={i} className="text-lg leading-relaxed text-foreground">
+            <p
+              key={i}
+              className="text-base leading-relaxed text-foreground sm:text-lg"
+            >
               {para}
             </p>
           ))}
@@ -119,17 +125,17 @@ export function SolucaoDetail({
 
       {/* Factors */}
       {detail.factors && (
-        <section className="mt-12 max-w-[760px]">
+        <section className="mt-10 min-w-0 max-w-[760px] sm:mt-12">
           {detail.factors.title && (
-            <p className="text-lg leading-relaxed text-foreground">
+            <p className="text-base leading-relaxed text-foreground sm:text-lg">
               {detail.factors.title}
             </p>
           )}
-          <ul className="mt-4 flex flex-wrap gap-2.5">
+          <ul className="mt-4 flex flex-wrap gap-2">
             {detail.factors.items.map((item) => (
               <li
                 key={item}
-                className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground"
+                className="max-w-full rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground sm:px-4 sm:py-2 sm:text-sm"
               >
                 {item}
               </li>
@@ -140,31 +146,35 @@ export function SolucaoDetail({
 
       {/* Stats strip */}
       {detail.stats && detail.stats.length > 0 && (
-        <section className="mt-14 grid divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0 md:mt-20">
+        <section className="mt-10 grid divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card sm:mt-14 sm:grid-cols-3 sm:divide-x sm:divide-y-0 md:mt-20">
           {detail.stats.map((stat) => (
-            <Stat key={stat.label} {...stat} className="px-8 py-8" />
+            <Stat
+              key={stat.label}
+              {...stat}
+              className="px-5 py-6 sm:px-8 sm:py-8"
+            />
           ))}
         </section>
       )}
 
       {/* Como funciona */}
       {detail.steps && detail.steps.length > 0 && (
-        <section className="mt-16 md:mt-24">
-          <Eyebrow>Como funciona</Eyebrow>
+        <section className="mt-12 min-w-0 md:mt-24">
+          <Eyebrow className="whitespace-normal">Como funciona</Eyebrow>
           <h2
             className={cn(
               displayFont.className,
-              "mt-4 max-w-[18ch] text-3xl leading-tight tracking-tight text-primary md:text-4xl",
+              "mt-3 break-words text-2xl leading-tight tracking-tight text-primary sm:mt-4 sm:text-3xl md:max-w-[18ch] md:text-4xl",
             )}
             style={displayFont.style}
           >
             {detail.stepsTitle ?? "O processo, etapa a etapa."}
           </h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="mt-6 grid gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2">
             {detail.steps.map((step, i) => (
               <article
                 key={step.title}
-                className="flex items-start gap-5 rounded-2xl border border-border bg-card p-7"
+                className="flex min-w-0 items-start gap-4 rounded-2xl border border-border bg-card p-4 sm:gap-5 sm:p-7"
               >
                 <span
                   className={cn(
@@ -193,13 +203,13 @@ export function SolucaoDetail({
 
       {/* Highlights */}
       {detail.highlights && detail.highlights.length > 0 && (
-        <section className="mt-12 grid gap-6 md:mt-16 md:grid-cols-2">
+        <section className="mt-10 grid min-w-0 gap-4 sm:mt-12 sm:gap-6 md:mt-16 md:grid-cols-2">
           {detail.highlights.map((highlight) => (
             <div
               key={highlight.title}
-              className="rounded-2xl border border-brand-orange/30 bg-accent/[0.04] p-7"
+              className="min-w-0 rounded-2xl border border-brand-orange/30 bg-accent/[0.04] p-4 sm:p-7"
             >
-              <h3 className="text-sm font-bold uppercase tracking-widest text-brand-orange">
+              <h3 className="text-xs font-bold uppercase leading-snug tracking-wide text-brand-orange sm:text-sm sm:tracking-widest">
                 {highlight.title}
               </h3>
               {highlight.body && (
@@ -235,13 +245,13 @@ export function SolucaoDetail({
 
       {/* Deliverables + quote */}
       {(detail.deliverables?.length || detail.quote) && (
-        <section className="mt-14 grid gap-6 md:mt-20 md:grid-cols-2">
+        <section className="mt-10 grid min-w-0 gap-4 sm:mt-14 sm:gap-6 md:mt-20 md:grid-cols-2">
           {detail.deliverables && detail.deliverables.length > 0 && (
-            <div className="rounded-2xl border border-border bg-card p-9">
+            <div className="min-w-0 rounded-2xl border border-border bg-card p-5 sm:p-9">
               <h3
                 className={cn(
                   displayFont.className,
-                  "text-2xl text-primary",
+                  "text-xl text-primary sm:text-2xl",
                 )}
                 style={displayFont.style}
               >
@@ -261,9 +271,12 @@ export function SolucaoDetail({
             </div>
           )}
           {detail.quote && (
-            <div className="flex flex-col justify-center rounded-2xl bg-primary p-10 text-primary-foreground">
+            <div className="flex min-w-0 flex-col justify-center rounded-2xl bg-primary p-6 text-primary-foreground sm:p-10">
               <span
-                className={cn(displayFont.className, "text-6xl leading-none text-brand-orange")}
+                className={cn(
+                  displayFont.className,
+                  "text-4xl leading-none text-brand-orange sm:text-6xl",
+                )}
                 aria-hidden
               >
                 &ldquo;
@@ -271,7 +284,7 @@ export function SolucaoDetail({
               <p
                 className={cn(
                   displayFont.className,
-                  "mt-4 text-2xl leading-snug tracking-tight text-white md:text-3xl",
+                  "mt-3 text-lg leading-snug tracking-tight text-white sm:mt-4 sm:text-2xl md:text-3xl",
                 )}
                 style={{ fontVariationSettings: "'wght' 700" }}
               >
@@ -283,43 +296,61 @@ export function SolucaoDetail({
       )}
 
       {/* Other solutions */}
-      <section className="mt-16 md:mt-24">
-        <Eyebrow>Continue explorando</Eyebrow>
+      <section className="mt-12 min-w-0 md:mt-24">
+        <Eyebrow className="whitespace-normal">Continue explorando</Eyebrow>
         <h2
           className={cn(
             displayFont.className,
-            "mt-4 text-3xl leading-tight tracking-tight text-primary md:text-4xl",
+            "mt-3 break-words text-2xl leading-tight tracking-tight text-primary sm:mt-4 sm:text-3xl md:text-4xl",
           )}
           style={displayFont.style}
         >
           Outras soluções do ecossistema
         </h2>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {others.map((other) => (
-            <Link
-              key={other.id}
-              href={`/solucoes/${other.id}`}
-              className="group flex flex-col gap-2 rounded-2xl border border-border bg-card p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
-            >
-              <span
-                className={cn(displayFont.className, "text-2xl text-primary")}
-                style={displayFont.style}
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+          {others.map((other) => {
+            const cardClass =
+              "group flex min-w-0 flex-col gap-2 rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg sm:p-6";
+            const inner = (
+              <>
+                <span
+                  className={cn(
+                    displayFont.className,
+                    "break-words text-xl text-primary sm:text-2xl",
+                  )}
+                  style={displayFont.style}
+                >
+                  <BrandName name={other.name} />
+                </span>
+                <span className="text-sm leading-relaxed text-muted-foreground">
+                  {other.tagline}
+                </span>
+                <span className="mt-2">
+                  <LinkArrow>Conhecer</LinkArrow>
+                </span>
+              </>
+            );
+            return other.externalUrl ? (
+              <a
+                key={other.id}
+                href={other.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cardClass}
               >
-                <BrandName name={other.name} />
-              </span>
-              <span className="text-sm leading-relaxed text-muted-foreground">
-                {other.tagline}
-              </span>
-              <span className="mt-2">
-                <LinkArrow>Conhecer</LinkArrow>
-              </span>
-            </Link>
-          ))}
+                {inner}
+              </a>
+            ) : (
+              <Link key={other.id} href={`/solucoes/${other.id}`} className={cardClass}>
+                {inner}
+              </Link>
+            );
+          })}
         </div>
       </section>
 
       {/* Contextual CTA */}
-      <section className="mt-16 md:mt-24">
+      <section className="mt-12 min-w-0 md:mt-24">
         <SolCta title={`Quer aplicar ${plainName} na sua fazenda?`} />
       </section>
     </div>

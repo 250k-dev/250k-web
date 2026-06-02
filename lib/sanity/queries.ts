@@ -102,5 +102,46 @@ export const EVENTO_SLUGS_QUERY = `*[_type == "evento" && defined(slug.current)]
   publishedAt
 }`;
 
-/** Feed do Hub: todos os artigos para mesclar com vídeos e eventos. */
 export const POSTS_FEED_QUERY = `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) ${POSTS_LIST_PROJECTION}`;
+
+const TREINAMENTOS_LIST_PROJECTION = `{
+  _id,
+  title,
+  "slug": slug,
+  tipo,
+  summary,
+  date,
+  local,
+  audience,
+  participants,
+  coverImage,
+  publishedAt
+}`;
+
+export const TREINAMENTOS_LIST_QUERY = `*[_type == "treinamento" && defined(slug.current)] | order(publishedAt desc) ${TREINAMENTOS_LIST_PROJECTION}`;
+
+export const TREINAMENTO_BY_SLUG_QUERY = `*[_type == "treinamento" && slug.current == $slug][0] {
+  _id,
+  _type,
+  title,
+  "slug": slug,
+  tipo,
+  summary,
+  date,
+  local,
+  audience,
+  participants,
+  coverImage,
+  videoUrl,
+  body,
+  highlights,
+  gallery,
+  publishedAt
+}`;
+
+export const OTHER_TREINAMENTOS_QUERY = `*[_type == "treinamento" && defined(slug.current) && slug.current != $slug] | order(publishedAt desc) [0...3] ${TREINAMENTOS_LIST_PROJECTION}`;
+
+export const TREINAMENTO_SLUGS_QUERY = `*[_type == "treinamento" && defined(slug.current)] {
+  "slug": slug,
+  publishedAt
+}`;

@@ -149,7 +149,7 @@ function TierCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.12, ease: "easeOut" }}
       style={{ perspective: "900px" }}
-      className="flex-1 min-w-50"
+      className="w-[min(78vw,260px)] shrink-0 snap-center md:w-auto md:flex-1 md:min-w-0"
     >
       <div
         ref={cardRef}
@@ -388,8 +388,8 @@ export function LoyaltyCards() {
         </p>
       </div>
 
-      {/* Cards — always side by side, scroll on small screens */}
-      <div className="flex flex-row gap-8 pb-2">
+      {/* Cards — carrossel horizontal no mobile, grade no desktop */}
+      <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 snap-x snap-mandatory [scrollbar-width:thin] md:mx-0 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 md:pb-0 md:snap-none lg:grid-cols-4 lg:gap-8">
         {TIERS.map((tier, i) => (
           <TierCard
             key={tier.name}

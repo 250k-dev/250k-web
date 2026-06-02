@@ -111,6 +111,8 @@ const Carousel = React.forwardRef<
         return
       }
 
+      // Sincroniza o estado inicial com a API do embla (padrão do shadcn).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       onSelect(api)
       api.on("reInit", onSelect)
       api.on("select", onSelect)

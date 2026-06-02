@@ -113,6 +113,30 @@ export interface Evento extends FeaturedFields {
   category?: { title: string; slug: { current: string } } | null;
 }
 
+export type TreinamentoTipo = "Palestra" | "Treinamento" | "Workshop";
+
+export interface TreinamentoListItem {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  tipo: TreinamentoTipo;
+  summary?: string;
+  date?: string;
+  local?: string;
+  audience?: string;
+  participants?: string;
+  coverImage?: SanityImage;
+  publishedAt: string;
+}
+
+export interface Treinamento extends TreinamentoListItem {
+  _type: "treinamento";
+  videoUrl?: string;
+  body?: PortableTextBlock[];
+  highlights?: string[];
+  gallery?: SanityImage[];
+}
+
 /** Item normalizado para o feed misto do Hub de Conteúdo. */
 export interface FeedItem {
   id: string;

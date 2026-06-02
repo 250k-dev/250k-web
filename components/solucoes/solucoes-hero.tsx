@@ -15,7 +15,7 @@ const HERO_STATS = [
 export function SolucoesHero() {
   return (
     <section className="container mx-auto max-w-6xl px-4 pt-8 md:pt-12">
-      <div className="relative overflow-hidden rounded-3xl bg-primary px-7 py-14 md:px-16 md:py-20">
+      <div className="relative overflow-hidden rounded-2xl bg-primary px-5 py-10 sm:rounded-3xl sm:px-7 sm:py-14 md:px-16 md:py-20">
         <Image
           src={HERO_WALLPAPER}
           alt=""
@@ -46,7 +46,7 @@ export function SolucoesHero() {
             norte de Mato Grosso.
           </p>
 
-          <div className="mt-11 flex flex-wrap gap-10">
+          <div className="mt-8 flex flex-wrap gap-6 sm:mt-11 sm:gap-10">
             {HERO_STATS.map((stat) => (
               <Stat key={stat.label} onDark {...stat} />
             ))}

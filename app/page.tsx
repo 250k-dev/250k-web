@@ -95,7 +95,7 @@ const hubProducts: HubProduct[] = [
     logo: "/images/empresas/Academy2.svg",
     logoAlt: "250K Academy",
     description: "Onde dados de campo viram produtividade",
-    ctaHref: "https://academiadeconsultores.250k.com.br",
+    ctaHref: "https://250k.com.br/academia-de-consultores-250k/",
     ctaLabel: "Acessar Academia",
   },
 ];
@@ -305,14 +305,14 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="relative mt-2 w-screen max-w-[100vw] -translate-x-1/2 left-1/2">
+        <div className="relative mt-2 -mx-4 w-[calc(100%+2rem)] max-w-none overflow-x-clip sm:-mx-5 sm:w-[calc(100%+2.5rem)] md:mx-0 md:w-full">
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-linear-to-r from-background via-background/80 to-transparent backdrop-blur-[1px] sm:w-24"
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-linear-to-r from-background via-background/80 to-transparent sm:w-16 md:w-24"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-linear-to-l from-background via-background/80 to-transparent backdrop-blur-[1px] sm:w-24"
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-linear-to-l from-background via-background/80 to-transparent sm:w-16 md:w-24"
           />
           <div className="mask-[linear-gradient(90deg,transparent_0%,black_7%,black_93%,transparent_100%)] [-webkit-mask-image:linear-gradient(90deg,transparent_0%,black_7%,black_93%,transparent_100%)]">
             <ResearchPolesMap />

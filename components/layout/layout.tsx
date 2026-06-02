@@ -38,6 +38,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const isAdmin = pathname?.startsWith(ADMIN_PATH);
   const isLandingPage = isLandingPagePath(pathname ?? null);
   const isQuestionario = pathname?.startsWith("/questionario") ?? false;
+  const isHome = pathname === "/";
 
   if (isStudio || isAdmin || isLandingPage) {
     return <div className="flex flex-1 flex-col min-h-0">{children}</div>;
@@ -53,7 +54,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <MarketingLenis />
       </Suspense>
       <Header />
-      <main className="flex-1">{children}</main>
+      <main
+        className={
+          isHome
+            ? "flex-1 min-w-0 overflow-x-clip"
+            : "flex-1 min-w-0 overflow-x-clip pt-[calc(3rem+env(safe-area-inset-top,0px))]"
+        }
+      >
+        {children}
+      </main>
       <Footer />
       <FloatingWeatherWidget />
       <WhatsAppFAB />

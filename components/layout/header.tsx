@@ -52,32 +52,37 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 z-50 w-full transition-[background-color,border-color,height] duration-500",
+        "fixed top-0 z-50 w-full max-w-full pt-[env(safe-area-inset-top,0px)] transition-[background-color,border-color] duration-500",
         isTransparent
-          ? "h-24 border-b border-transparent bg-transparent"
-          : "h-12 border-b border-border bg-background backdrop-blur-3xl supports-backdrop-filter:bg-background/85",
+          ? "border-b border-transparent bg-transparent"
+          : "border-b border-border bg-background backdrop-blur-3xl supports-backdrop-filter:bg-background/85",
       )}
     >
-      <div className="container mx-auto flex h-full max-w-6xl items-center justify-between px-4">
+      <div
+        className={cn(
+          "container mx-auto flex min-w-0 max-w-6xl items-center justify-between gap-2 px-4 sm:px-5",
+          isTransparent ? "h-16 sm:h-20 md:h-24" : "h-12",
+        )}
+      >
         <Link
           href="/"
           className={cn(
-            "flex items-center hover:opacity-90 transition-[opacity,transform,gap] duration-500",
-            isTransparent ? "text-white gap-2 lg:gap-4" : "text-primary gap-2",
+            "flex min-w-0 shrink items-center hover:opacity-90 transition-[opacity,transform,gap] duration-500",
+            isTransparent ? "text-white gap-1.5 sm:gap-2 lg:gap-4" : "text-primary gap-2",
           )}
           aria-label="250k - Página inicial"
         >
           <LogoIcon
             className={cn(
-              "w-auto transition-[height,filter,transform] duration-500",
-              isTransparent ? "h-10 lg:h-12" : "h-6",
+              "w-auto shrink-0 transition-[height,filter,transform] duration-500",
+              isTransparent ? "h-8 sm:h-10 lg:h-12" : "h-6",
               isTransparent && "brightness-0 invert",
             )}
           />
           <LogoLabel
             className={cn(
-              "h-auto transition-[width,filter,transform] duration-500",
-              isTransparent ? "w-20 lg:w-28" : "w-16",
+              "h-auto shrink min-w-0 transition-[width,filter,transform] duration-500",
+              isTransparent ? "w-16 sm:w-20 lg:w-28" : "w-14 sm:w-16",
               isTransparent && "brightness-0 invert",
             )}
           />
@@ -122,11 +127,12 @@ export function Header() {
           </Button>
         </nav>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2 md:hidden">
           <Button
             asChild
             size="sm"
             className={cn(
+              "hidden min-[400px]:inline-flex",
               isTransparent &&
                 "border-white text-white bg-transparent hover:bg-white/10 hover:text-white",
             )}
@@ -140,6 +146,7 @@ export function Header() {
                 size="icon"
                 aria-label="Abrir menu"
                 className={cn(
+                  "size-9 shrink-0",
                   isTransparent &&
                     "text-white hover:bg-white/10 hover:text-white",
                 )}
@@ -147,25 +154,44 @@ export function Header() {
                 <IconMenu className="h-5 w-5" size={20} />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] sm:w-[320px]">
-              <SheetHeader>
-                <SheetTitle className="text-left">Menu</SheetTitle>
+            <SheetContent
+              side="right"
+              className="flex h-full w-[min(100vw-2rem,320px)] flex-col gap-0 p-0 sm:max-w-[320px]"
+            >
+              <SheetHeader className="border-b border-border px-6 py-4 text-left">
+                <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
               <nav
-                className="flex flex-col gap-4 pt-6"
+                className="flex flex-1 flex-col overflow-y-auto px-6 py-4"
                 aria-label="Navegação mobile"
               >
-                {nav.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    className="text-base font-medium text-foreground hover:text-primary transition-colors duration-500 py-2 border-b border-border last:border-0"
-                  >
-                    {label}
-                  </Link>
-                ))}
+                {nav.map(({ href, label }) => {
+                  const isActive = isNavActive(pathname, href);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "rounded-lg px-3 py-3 text-base font-medium transition-colors",
+                        isActive
+                          ? "bg-brand-orange/10 text-brand-orange"
+                          : "text-foreground hover:bg-muted hover:text-primary",
+                      )}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
               </nav>
+              <div className="mt-auto border-t border-border p-6">
+                <Button asChild className="w-full" size="lg">
+                  <Link href="/contato" onClick={() => setOpen(false)}>
+                    Fale conosco
+                  </Link>
+                </Button>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

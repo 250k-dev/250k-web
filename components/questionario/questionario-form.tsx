@@ -28,10 +28,14 @@ import {
   amostragemOptions,
   cultureOptions,
   decisionMakerOptions,
+  fieldVariabilityOptions,
   gargaloOptions,
   historicoOrganizadoOptions,
   impactoOptions,
+  machineryCapacityOptions,
+  soilAnalysisFrequencyOptions,
   taxaVariavelOptions,
+  technicalTeamOptions,
   tentouResolverOptions,
   urgenciaOptions,
 } from "./questionario-types";
@@ -93,6 +97,15 @@ const questionarioSchema = z
     cultures: z
       .array(z.enum(cultureOptions))
       .min(1, "Selecione pelo menos uma cultura."),
+    mainCulture: z
+      .enum(cultureOptions)
+      .optional()
+      .refine((v) => v !== undefined, {
+        message: "Selecione a cultura principal.",
+      }),
+    currentYieldScHa: z
+      .number({ error: "Informe a produtividade média atual." })
+      .positive("Informe uma produtividade maior que zero."),
     decisionMaker: z
       .enum(decisionMakerOptions)
       .optional()
@@ -115,6 +128,12 @@ const questionarioSchema = z
       .refine((v) => v !== undefined, {
         message: "Selecione o que esse problema impacta mais.",
       }),
+    fieldVariability: z
+      .enum(fieldVariabilityOptions)
+      .optional()
+      .refine((v) => v !== undefined, {
+        message: "Selecione a variabilidade entre talhões.",
+      }),
     triedBefore: z
       .enum(tentouResolverOptions)
       .optional()
@@ -134,11 +153,29 @@ const questionarioSchema = z
       .refine((v) => v !== undefined, {
         message: "Informe se usa taxa variável.",
       }),
+    soilAnalysisFrequency: z
+      .enum(soilAnalysisFrequencyOptions)
+      .optional()
+      .refine((v) => v !== undefined, {
+        message: "Informe a frequência de análise de solo.",
+      }),
     organizedHistory: z
       .enum(historicoOrganizadoOptions)
       .optional()
       .refine((v) => v !== undefined, {
         message: "Selecione uma opção sobre histórico organizado.",
+      }),
+    machineryCapacity: z
+      .enum(machineryCapacityOptions)
+      .optional()
+      .refine((v) => v !== undefined, {
+        message: "Selecione a estrutura de máquinas.",
+      }),
+    technicalTeam: z
+      .enum(technicalTeamOptions)
+      .optional()
+      .refine((v) => v !== undefined, {
+        message: "Selecione o apoio técnico.",
       }),
     willingAdjustManagement: z
       .enum(ajustarManejoOptions)
@@ -171,6 +208,17 @@ const questionarioSchema = z
         });
       }
     }
+    if (
+      values.mainCulture &&
+      values.cultures.length > 0 &&
+      !values.cultures.includes(values.mainCulture)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["mainCulture"],
+        message: "A cultura principal deve estar entre as culturas selecionadas.",
+      });
+    }
   });
 
 type QuestionarioFormValues = z.infer<typeof questionarioSchema>;
@@ -199,11 +247,26 @@ const stepOrder: StepId[] = [
 const stepFieldNames: Record<StepId, Array<keyof QuestionarioFormValues>> = {
   dados_lead: ["clientName", "whatsapp", "email"],
   bloco1: ["farmName", "municipality", "totalAreaHa"],
-  culturas_decisao: ["cultures", "decisionMaker", "otherDecisionMaker"],
-  gargalo_impacto: ["mainBottleneck", "mainBottleneckImpact"],
+  culturas_decisao: [
+    "cultures",
+    "mainCulture",
+    "currentYieldScHa",
+    "decisionMaker",
+    "otherDecisionMaker",
+  ],
+  gargalo_impacto: [
+    "mainBottleneck",
+    "mainBottleneckImpact",
+    "fieldVariability",
+  ],
   tentou_resolver: ["triedBefore"],
-  taxa_variavel: ["georeferencedSampling", "variableRate"],
-  ajuste_manejo: ["organizedHistory", "willingAdjustManagement"],
+  taxa_variavel: ["georeferencedSampling", "variableRate", "soilAnalysisFrequency"],
+  ajuste_manejo: [
+    "organizedHistory",
+    "machineryCapacity",
+    "technicalTeam",
+    "willingAdjustManagement",
+  ],
   urgencia: ["urgencyToResolve"],
 };
 
@@ -340,15 +403,21 @@ export function QuestionarioForm() {
       municipality: "",
       totalAreaHa: 0,
       cultures: [],
+      mainCulture: undefined,
+      currentYieldScHa: 0,
       decisionMaker: undefined,
       otherDecisionMaker: "",
       mainBottleneck: undefined,
       mainBottleneckImpact: undefined,
+      fieldVariability: undefined,
       triedBefore: undefined,
 
       georeferencedSampling: undefined,
       variableRate: undefined,
+      soilAnalysisFrequency: undefined,
       organizedHistory: undefined,
+      machineryCapacity: undefined,
+      technicalTeam: undefined,
       willingAdjustManagement: undefined,
       urgencyToResolve: undefined,
 
@@ -436,6 +505,14 @@ export function QuestionarioForm() {
       ? current.filter((x) => x !== culture)
       : [...current, culture];
     form.setValue("cultures", next, { shouldValidate: true });
+
+    // Cultura principal: auto-seleciona quando há só uma; limpa se saiu da lista.
+    const currentMain = form.getValues("mainCulture");
+    if (next.length === 1) {
+      form.setValue("mainCulture", next[0], { shouldValidate: true });
+    } else if (currentMain && !next.includes(currentMain)) {
+      form.setValue("mainCulture", undefined, { shouldValidate: true });
+    }
   }
 
   const handleGenerateReport = form.handleSubmit(async (data) => {
@@ -696,6 +773,70 @@ export function QuestionarioForm() {
                   ) : null}
                 </div>
 
+                {/* Cultura principal (quando há várias) + produtividade atual */}
+                <div
+                  className={`flex flex-col gap-8 pb-12 ${
+                    stepId === "culturas_decisao" ? "" : "hidden"
+                  }`}
+                >
+                  {values.cultures.length > 1 ? (
+                    <div className="flex flex-col space-y-4">
+                      <Label>Qual é a cultura principal?</Label>
+                      <RadioGroup
+                        name="mainCulture"
+                        value={values.mainCulture}
+                        onValueChange={(v) =>
+                          form.setValue("mainCulture", v as Culture, {
+                            shouldValidate: true,
+                          })
+                        }
+                        className="grid-cols-1 sm:grid-cols-2"
+                      >
+                        {values.cultures.map((opt) => (
+                          <OptionRadio
+                            key={opt}
+                            value={opt}
+                            id={optionId("mainCulture", opt)}
+                            checked={values.mainCulture === opt}
+                            label={opt}
+                          />
+                        ))}
+                      </RadioGroup>
+                      {form.formState.errors.mainCulture ? (
+                        <p className="text-sm text-destructive">
+                          {form.formState.errors.mainCulture.message}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="currentYieldScHa">
+                      Produtividade média atual
+                      {values.mainCulture ? ` de ${values.mainCulture}` : ""}{" "}
+                      <span className="text-xs text-muted-foreground">
+                        (sc/ha)
+                      </span>
+                    </Label>
+                    <Input
+                      id="currentYieldScHa"
+                      type="number"
+                      inputMode="decimal"
+                      step="0.1"
+                      placeholder="Ex: 60"
+                      {...form.register("currentYieldScHa", {
+                        valueAsNumber: true,
+                      })}
+                      className={questionarioInputClassName}
+                    />
+                    {form.formState.errors.currentYieldScHa ? (
+                      <p className="text-sm text-destructive">
+                        {form.formState.errors.currentYieldScHa.message}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+
                 <div
                   className={`flex flex-col space-y-4 ${
                     stepId === "culturas_decisao" ? "" : "hidden"
@@ -829,6 +970,41 @@ export function QuestionarioForm() {
                 </div>
 
                 <div
+                  className={`flex flex-col space-y-4 pt-12 ${
+                    stepId === "gargalo_impacto" ? "" : "hidden"
+                  }`}
+                >
+                  <Label>Como é a variabilidade entre os talhões?</Label>
+                  <RadioGroup
+                    name="fieldVariability"
+                    value={values.fieldVariability}
+                    onValueChange={(v) =>
+                      form.setValue(
+                        "fieldVariability",
+                        v as QuestionarioAnswers["fieldVariability"],
+                        { shouldValidate: true },
+                      )
+                    }
+                    className="grid-cols-1"
+                  >
+                    {fieldVariabilityOptions.map((opt) => (
+                      <OptionRadio
+                        key={opt}
+                        value={opt}
+                        id={optionId("fieldVariability", opt)}
+                        checked={values.fieldVariability === opt}
+                        label={opt}
+                      />
+                    ))}
+                  </RadioGroup>
+                  {form.formState.errors.fieldVariability ? (
+                    <p className="text-sm text-destructive">
+                      {form.formState.errors.fieldVariability.message}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div
                   className={`flex flex-col space-y-4 ${
                     stepId === "tentou_resolver" ? "" : "hidden"
                   }`}
@@ -928,6 +1104,37 @@ export function QuestionarioForm() {
                     </p>
                   ) : null}
                 </div>
+
+                <div className="flex flex-col space-y-4">
+                  <Label>Com que frequência faz análise de solo?</Label>
+                  <RadioGroup
+                    name="soilAnalysisFrequency"
+                    value={values.soilAnalysisFrequency}
+                    onValueChange={(v) =>
+                      form.setValue(
+                        "soilAnalysisFrequency",
+                        v as QuestionarioAnswers["soilAnalysisFrequency"],
+                        { shouldValidate: true },
+                      )
+                    }
+                    className="grid-cols-1"
+                  >
+                    {soilAnalysisFrequencyOptions.map((opt) => (
+                      <OptionRadio
+                        key={opt}
+                        value={opt}
+                        id={optionId("soilAnalysisFrequency", opt)}
+                        checked={values.soilAnalysisFrequency === opt}
+                        label={opt}
+                      />
+                    ))}
+                  </RadioGroup>
+                  {form.formState.errors.soilAnalysisFrequency ? (
+                    <p className="text-sm text-destructive">
+                      {form.formState.errors.soilAnalysisFrequency.message}
+                    </p>
+                  ) : null}
+                </div>
               </div>
             ) : null}
 
@@ -960,6 +1167,68 @@ export function QuestionarioForm() {
                   {form.formState.errors.organizedHistory ? (
                     <p className="text-sm text-destructive">
                       {form.formState.errors.organizedHistory.message}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="flex flex-col space-y-4">
+                  <Label>Qual a estrutura de máquinas para executar?</Label>
+                  <RadioGroup
+                    name="machineryCapacity"
+                    value={values.machineryCapacity}
+                    onValueChange={(v) =>
+                      form.setValue(
+                        "machineryCapacity",
+                        v as QuestionarioAnswers["machineryCapacity"],
+                        { shouldValidate: true },
+                      )
+                    }
+                    className="grid-cols-1"
+                  >
+                    {machineryCapacityOptions.map((opt) => (
+                      <OptionRadio
+                        key={opt}
+                        value={opt}
+                        id={optionId("machineryCapacity", opt)}
+                        checked={values.machineryCapacity === opt}
+                        label={opt}
+                      />
+                    ))}
+                  </RadioGroup>
+                  {form.formState.errors.machineryCapacity ? (
+                    <p className="text-sm text-destructive">
+                      {form.formState.errors.machineryCapacity.message}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="flex flex-col space-y-4">
+                  <Label>Conta com apoio técnico/equipe?</Label>
+                  <RadioGroup
+                    name="technicalTeam"
+                    value={values.technicalTeam}
+                    onValueChange={(v) =>
+                      form.setValue(
+                        "technicalTeam",
+                        v as QuestionarioAnswers["technicalTeam"],
+                        { shouldValidate: true },
+                      )
+                    }
+                    className="grid-cols-1"
+                  >
+                    {technicalTeamOptions.map((opt) => (
+                      <OptionRadio
+                        key={opt}
+                        value={opt}
+                        id={optionId("technicalTeam", opt)}
+                        checked={values.technicalTeam === opt}
+                        label={opt}
+                      />
+                    ))}
+                  </RadioGroup>
+                  {form.formState.errors.technicalTeam ? (
+                    <p className="text-sm text-destructive">
+                      {form.formState.errors.technicalTeam.message}
                     </p>
                   ) : null}
                 </div>

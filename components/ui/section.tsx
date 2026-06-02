@@ -32,7 +32,12 @@ export function Section({
 
   return (
     <section id={id} className={cn("py-12 md:py-16", className)}>
-      <div className={cn("container mx-auto px-4", maxWidthClass[variant])}>
+      <div
+        className={cn(
+          "container mx-auto min-w-0 px-4 sm:px-5",
+          maxWidthClass[variant],
+        )}
+      >
         {showHeader && (
           <div className="mb-8">
             {title && (

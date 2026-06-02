@@ -16,11 +16,11 @@ interface StatProps {
 /** Estatística: número grande (Archivo) com sufixo laranja + rótulo uppercase. */
 export function Stat({ value, suffix, label, onDark, className }: StatProps) {
   return (
-    <div className={className}>
+    <div className={cn("min-w-0", className)}>
       <div
         className={cn(
           archivoSolutionTitle.className,
-          "text-3xl md:text-4xl tracking-tight",
+          "break-words text-2xl tracking-tight sm:text-3xl md:text-4xl",
           onDark ? "text-white" : "text-primary",
         )}
         style={{ fontVariationSettings: "'wght' 800" }}

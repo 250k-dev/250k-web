@@ -122,13 +122,23 @@
     scroll-behavior: smooth;
   }
   [id] {
-    scroll-margin-top: 6rem;
+    scroll-margin-top: 4.5rem;
+  }
+  @media (min-width: 768px) {
+    [id] {
+      scroll-margin-top: 6rem;
+    }
   }
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    overflow-x: clip;
+  }
   body {
     @apply bg-background text-foreground;
+    overflow-x: clip;
+    max-width: 100%;
   }
   h1 {
     @apply font-bold tracking-tight;

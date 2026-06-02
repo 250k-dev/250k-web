@@ -79,7 +79,7 @@ export function FloatingWeatherWidget() {
     <div
       aria-label="Clima em Sinop, MT"
       className={cn(
-        "fixed bottom-6 left-6 z-50 flex items-center gap-2 rounded-full border border-border bg-muted/85 py-2 px-3 shadow-lg backdrop-blur transition-all duration-300",
+        "fixed bottom-20 left-3 z-40 flex max-w-[calc(100vw-5.5rem)] items-center gap-2 rounded-full border border-border bg-muted/85 py-2 px-3 shadow-lg backdrop-blur transition-all duration-300 sm:bottom-6 sm:left-6 sm:z-50 sm:max-w-none",
         getFloatingVisibilityClassName(visible),
       )}
     >

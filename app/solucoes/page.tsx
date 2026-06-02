@@ -18,7 +18,7 @@ export default function SolucoesPage() {
     <>
       <SolucoesHero />
 
-      <div className="container mx-auto max-w-6xl space-y-20 px-4 py-16 md:space-y-28 md:py-24">
+      <div className="container mx-auto min-w-0 max-w-6xl space-y-16 px-4 py-12 sm:space-y-20 sm:px-5 sm:py-16 md:space-y-28 md:py-24">
         {/* Intro */}
         <section className="grid gap-10 md:grid-cols-[1fr_1.3fr] md:gap-16">
           <div>

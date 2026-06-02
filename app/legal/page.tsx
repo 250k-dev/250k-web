@@ -16,11 +16,11 @@ export default function LegalPage() {
         <p className="text-muted-foreground">Última atualização: junho de 2025</p>
       </div>
 
-      <div className="flex gap-12">
+      <div className="flex flex-col gap-10 lg:flex-row lg:gap-12">
         <LegalSidebar />
 
         {/* Conteúdo */}
-        <main className="min-w-0 flex-1 space-y-20 text-sm leading-relaxed text-muted-foreground">
+        <main className="min-w-0 flex-1 space-y-16 text-sm leading-relaxed text-muted-foreground sm:space-y-20">
 
           {/* ─── POLÍTICA DE PRIVACIDADE ─── */}
           <section id="privacidade" className="scroll-mt-28 space-y-6">

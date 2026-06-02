@@ -24,6 +24,8 @@ const ITEMS: Array<{
   label: string;
   get: (d: CommoditiesData) => number | null;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  /** Sufixo de unidade exibido após o valor (ex.: "/sc"). */
+  unit?: string;
 }> = [
   {
     key: "usdBrl",
@@ -32,15 +34,16 @@ const ITEMS: Array<{
     get: (d) => d.usdBrl,
     Icon: IconCurrencyDollar,
   },
-  { key: "soja", label: "Soja", get: (d) => d.soja, Icon: IconPlant2 },
-  { key: "milho", label: "Milho", get: (d) => d.milho, Icon: IconWheat },
+  { key: "soja", label: "Soja", get: (d) => d.soja, Icon: IconPlant2, unit: "/sc" },
+  { key: "milho", label: "Milho", get: (d) => d.milho, Icon: IconWheat, unit: "/sc" },
   {
     key: "algodao",
     label: "Algodão",
     get: (d) => d.algodao,
     Icon: IconCircleDot,
+    unit: "/sc",
   },
-  { key: "cafe", label: "Café", get: (d) => d.cafe, Icon: IconCoffee },
+  { key: "cafe", label: "Café", get: (d) => d.cafe, Icon: IconCoffee, unit: "/sc" },
   { key: "acucar", label: "Açúcar", get: (d) => d.acucar, Icon: IconCandy },
 ];
 
@@ -50,10 +53,12 @@ function CommodityChip({
   label,
   value,
   Icon,
+  unit,
 }: {
   label: string;
   value: number | null;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  unit?: string;
 }) {
   return (
     <span className="inline-flex items-center gap-1 shrink-0 rounded-full bg-primary/5 px-2 py-1 text-[0.65rem]">
@@ -65,6 +70,7 @@ function CommodityChip({
       <span className="text-muted-foreground">{label}</span>
       <span className="font-semibold text-primary">
         R$ {formatValue(value)}
+        {unit ? <span className="text-muted-foreground">{unit}</span> : null}
       </span>
     </span>
   );
@@ -86,7 +92,7 @@ export function CommoditiesWidget({ data }: { data: CommoditiesData }) {
             className="flex shrink-0 min-w-0 items-center gap-4"
             aria-hidden={segmentIndex > 0}
           >
-            {ITEMS.map(({ key, label, get, Icon }) => {
+            {ITEMS.map(({ key, label, get, Icon, unit }) => {
               const value = get(data);
               if (value == null) return null;
               return (
@@ -95,6 +101,7 @@ export function CommoditiesWidget({ data }: { data: CommoditiesData }) {
                   label={label}
                   value={value}
                   Icon={Icon}
+                  unit={unit}
                 />
               );
             })}

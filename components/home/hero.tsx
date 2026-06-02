@@ -99,8 +99,8 @@ export function Hero({ videoSrc = DEFAULT_HERO_VIDEO_URL }: HeroProps) {
         <div className="absolute inset-0 z-2 bg-primary/70" aria-hidden />
       </div>
 
-      <div className="relative z-10 isolate container mx-auto px-4 max-w-6xl text-center flex-1 flex flex-col items-center justify-center [text-shadow:0_1px_2px_rgb(0_0_0/0.45)]">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase max-w-6xl">
+      <div className="relative z-10 isolate container mx-auto w-full min-w-0 max-w-6xl px-4 sm:px-5 text-center flex-1 flex flex-col items-center justify-center [text-shadow:0_1px_2px_rgb(0_0_0/0.45)]">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight uppercase max-w-6xl">
           <span className="block">Direcionamos a sua fazenda para atingir</span>
           <span className="block">
             <span className="bg-accent text-accent-foreground px-2 py-0.5 md:px-3 md:py-1 rounded text-shadow-none">
@@ -112,11 +112,11 @@ export function Hero({ videoSrc = DEFAULT_HERO_VIDEO_URL }: HeroProps) {
         <p className="mt-6 text-lg md:text-xl text-white/95 max-w-2xl mx-auto">
           Aplicamos a ciência que transforma dados em lucratividade
         </p>
-        <div className="mt-15 flex items-center justify-center">
+        <div className="mt-8 flex w-full max-w-md items-center justify-center px-2 sm:mt-15 sm:max-w-none">
           <Button
             asChild
             size="lg"
-            className="h-18 px-10 rounded-xl bg-accent hover:bg-accent! text-accent-foreground font-black text-xl uppercase tracking-tight border-b-4 border-orange-900 active:border-b-0 shadow-none transition-all duration-300 hover:shadow-[0_0_28px_hsl(var(--accent)/0.42)]"
+            className="h-auto min-h-12 w-full max-w-sm px-4 py-3.5 text-sm leading-snug sm:h-18 sm:w-auto sm:max-w-none sm:px-10 sm:py-0 sm:text-xl rounded-xl bg-accent hover:bg-accent! text-accent-foreground font-black uppercase tracking-tight border-b-4 border-orange-900 active:border-b-0 shadow-none transition-all duration-300 hover:shadow-[0_0_28px_hsl(var(--accent)/0.42)]"
           >
             <Link href="/questionario">Sua Fazenda é produtiva?</Link>
           </Button>

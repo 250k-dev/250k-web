@@ -16,11 +16,11 @@ export function SolCta({
   href = "/questionario",
 }: SolCtaProps) {
   return (
-    <div className="flex flex-col items-start gap-8 rounded-3xl bg-accent px-7 py-14 text-accent-foreground md:flex-row md:items-center md:justify-between md:px-16 md:py-16">
+    <div className="flex min-w-0 flex-col items-stretch gap-6 rounded-2xl bg-accent px-5 py-10 text-accent-foreground sm:rounded-3xl sm:px-7 sm:py-14 md:flex-row md:items-center md:justify-between md:gap-8 md:px-16 md:py-16">
       <h2
         className={cn(
           archivoSolutionTitle.className,
-          "max-w-[18ch] text-3xl leading-tight tracking-tight text-white md:text-5xl",
+          "min-w-0 break-words text-2xl leading-tight tracking-tight text-white sm:text-3xl md:max-w-[18ch] md:text-5xl",
         )}
         style={{ fontVariationSettings: "'wght' 800" }}
       >
@@ -28,7 +28,7 @@ export function SolCta({
       </h2>
       <Link
         href={href}
-        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-bold text-accent transition-colors hover:bg-primary hover:text-white"
+        className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 py-3.5 text-sm font-bold text-accent transition-colors hover:bg-primary hover:text-white sm:w-auto sm:px-6"
       >
         {ctaLabel}
         <IconArrowRight className="size-4" stroke={2.2} />

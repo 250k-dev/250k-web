@@ -3,6 +3,7 @@ import { categoryType } from "./category";
 import { postType } from "./post";
 import { videoType } from "./video";
 import { eventoType } from "./evento";
+import { treinamentoType } from "./treinamento";
 
 export const schemaTypes = [
   authorType,
@@ -10,4 +11,5 @@ export const schemaTypes = [
   postType,
   videoType,
   eventoType,
+  treinamentoType,
 ];

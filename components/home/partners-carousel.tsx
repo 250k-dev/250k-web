@@ -44,6 +44,7 @@ export function PartnersCarousel() {
               height={80}
               className="max-h-14 w-auto object-contain md:max-h-16"
               sizes="(max-width: 768px) 40vw, 140px"
+              unoptimized={partner.src.endsWith(".svg")}
             />
           </div>
         ))}

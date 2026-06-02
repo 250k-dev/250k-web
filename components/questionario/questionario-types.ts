@@ -96,21 +96,65 @@ export const urgenciaOptions = [
 ] as const;
 export type Urgencia = (typeof urgenciaOptions)[number];
 
+export const fieldVariabilityOptions = [
+  "Baixa (uniforme)",
+  "Média",
+  "Alta (talhões muito diferentes)",
+  "Não sei",
+] as const;
+export type FieldVariability = (typeof fieldVariabilityOptions)[number];
+
+export const soilAnalysisFrequencyOptions = [
+  "Nunca",
+  "Esporádica",
+  "A cada 2–3 anos",
+  "Todo ano",
+] as const;
+export type SoilAnalysisFrequency =
+  (typeof soilAnalysisFrequencyOptions)[number];
+
+export const machineryCapacityOptions = [
+  "Terceirizo / não tenho",
+  "Frota básica",
+  "Frota própria com tecnologia",
+] as const;
+export type MachineryCapacity = (typeof machineryCapacityOptions)[number];
+
+export const technicalTeamOptions = [
+  "Sem apoio técnico",
+  "Consultoria pontual",
+  "Consultoria fixa",
+  "Equipe própria",
+] as const;
+export type TechnicalTeam = (typeof technicalTeamOptions)[number];
+
 export interface QuestionarioAnswers {
   farmName: string;
   municipality: string;
   totalAreaHa: number;
   cultures: Culture[];
+  /** Cultura de referência para produtividade/preço (auto quando há só uma). */
+  mainCulture: Culture;
+  /** Produtividade média atual (sc/ha) da cultura principal. */
+  currentYieldScHa: number;
   decisionMaker: DecisionMaker;
   otherDecisionMaker?: string;
 
   mainBottleneck: Gargalo;
   mainBottleneckImpact: GargaloImpacto;
+  /** Variabilidade percebida entre talhões (pilar Dor Técnica / Impacto). */
+  fieldVariability: FieldVariability;
   triedBefore: TentouResolver;
 
   georeferencedSampling: Amostragem;
   variableRate: TaxaVariavel;
+  /** Frequência de análise de solo (pilar Maturidade Técnica). */
+  soilAnalysisFrequency: SoilAnalysisFrequency;
   organizedHistory: HistoricoOrganizado;
+  /** Estrutura de máquinas para executar recomendações (Capacidade Operacional). */
+  machineryCapacity: MachineryCapacity;
+  /** Apoio técnico/equipe (Capacidade Operacional). */
+  technicalTeam: TechnicalTeam;
   willingAdjustManagement: AjustarManejo;
   urgencyToResolve: Urgencia;
 
@@ -158,6 +202,14 @@ export interface QuestionarioReport {
   pricingCultureBasis?: "Soja" | "Milho" | "Referência_soja";
   /** Optional scale of total farm exposure (R$/ha × área). */
   farmTotalLossRApprox?: number;
+  /** Fator limitante do solo como sistema integrado (manual v3). */
+  limitingFactor?: "Químico" | "Físico" | "Biológico";
+  /** Solução real do ecossistema 250K conectada à dor (para CTA). */
+  recommendedSolution?: { id: string; name: string; href: string };
+  /** Produtividade informada e meta de referência (quando aplicável). */
+  currentYieldScHa?: number;
+  targetYieldScHa?: number;
+  yieldGapScHa?: number;
   sections?: DiagnosticoReportSections;
 }
 

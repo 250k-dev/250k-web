@@ -112,11 +112,35 @@ export default function QuestionarioResultadoPage() {
                     </span>
                     {" · "}
                     {`Estimativa: ${payload.report.productiveLossScHa} sc/ha (~R$ ${payload.report.financialImpactRPerHa.toLocaleString("pt-BR")}/ha)`}
+                    {payload.report.limitingFactor
+                      ? ` · Fator limitante: ${payload.report.limitingFactor}`
+                      : null}
                     {payload.report.pricingCultureBasis === "Referência_soja"
                       ? " — referência em saca de soja para culturas fora da tabela do manual"
                       : null}
                   </p>
                 )}
+
+              {payload.report.financialImpactRPerHa != null && (
+                <div className="mt-5 rounded-xl border border-brand-orange/30 bg-brand-orange/5 px-5 py-4">
+                  <div className="text-xs uppercase tracking-widest text-brand-orange font-semibold">
+                    Impacto financeiro estimado
+                  </div>
+                  <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="text-3xl md:text-4xl font-extrabold text-primary tabular-nums">
+                      R$ {payload.report.financialImpactRPerHa.toLocaleString("pt-BR")}
+                      <span className="text-lg font-bold text-muted-foreground">
+                        /ha
+                      </span>
+                    </span>
+                    {payload.report.farmTotalLossRApprox != null && (
+                      <span className="text-sm text-muted-foreground">
+                        ≈ R$ {payload.report.farmTotalLossRApprox.toLocaleString("pt-BR")} na fazenda/safra
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
@@ -172,6 +196,31 @@ export default function QuestionarioResultadoPage() {
               </div>
 
               <div className="questionario-resultado-no-print w-full flex flex-col gap-3 sm:gap-4 sm:items-center">
+                {payload.report.recommendedSolution && (
+                  <div className="w-full rounded-xl border border-border bg-card/60 p-5 text-center">
+                    <div className="text-sm text-muted-foreground">
+                      Solução recomendada para a sua dor principal
+                    </div>
+                    <div className="mt-1 text-lg font-bold text-primary">
+                      {payload.report.recommendedSolution.name}
+                    </div>
+                    <div className="mt-4 flex flex-col sm:flex-row gap-3 sm:justify-center">
+                      <Button asChild size="lg" className="flex-1 sm:flex-none">
+                        <Link href={payload.report.recommendedSolution.href}>
+                          Conhecer a {payload.report.recommendedSolution.name}
+                        </Link>
+                      </Button>
+                      <Button
+                        asChild
+                        size="lg"
+                        variant="outline"
+                        className="flex-1 sm:flex-none"
+                      >
+                        <Link href="/contato">Falar com um consultor</Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
                 <Button
                   type="button"
                   className="w-full"

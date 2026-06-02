@@ -10,6 +10,82 @@ import type {
 export const PRECO_SACA_SOJA_R = 120;
 export const PRECO_SACA_MILHO_R = 60;
 
+/** Meta/potencial de referência 250K (sc/ha) para ancorar o gap de produtividade. */
+export const TARGET_YIELD_SC_HA: Partial<Record<Culture, number>> = {
+  Soja: 85,
+  Milho: 165,
+};
+
+/** Fração da diferença (meta − atual) considerada recuperável com manejo/correção. */
+export const RECOVERABLE_GAP_FACTOR = 0.4;
+
+export type LimitingFactor = "Químico" | "Físico" | "Biológico";
+
+/** Solo como sistema integrado (manual v3): mapeia a dor ao fator limitante. */
+export function limitingFactor(g: Gargalo): LimitingFactor {
+  switch (g) {
+    case "Fertilidade/Calagem":
+    case "Custo alto de adubo":
+      return "Químico";
+    case "Compactação":
+    case "Falha de estande":
+      return "Físico";
+    case "Nematoides":
+      return "Biológico";
+    case "Baixa produtividade":
+    case "Não sabe exatamente":
+      return "Físico";
+    default: {
+      const _e: never = g;
+      return _e;
+    }
+  }
+}
+
+export interface RecommendedSolution {
+  id: string;
+  name: string;
+  href: string;
+}
+
+/**
+ * Conecta a dor dominante a uma solução real do ecossistema 250K
+ * (ids alinhados a lib/solucoes/data.ts). Nunca genérico.
+ */
+export function solutionForGargalo(g: Gargalo): RecommendedSolution {
+  const SOLO: RecommendedSolution = {
+    id: "solo-chec-k",
+    name: "Solo Chec-K",
+    href: "/solucoes/solo-chec-k",
+  };
+  const FIELD: RecommendedSolution = {
+    id: "field-k",
+    name: "Field-K",
+    href: "/solucoes/field-k",
+  };
+  const FINANCE: RecommendedSolution = {
+    id: "finance-k",
+    name: "Finance-K",
+    href: "/solucoes/finance-k",
+  };
+  switch (g) {
+    case "Fertilidade/Calagem":
+    case "Compactação":
+    case "Não sabe exatamente":
+      return SOLO;
+    case "Custo alto de adubo":
+      return FINANCE;
+    case "Nematoides":
+    case "Falha de estande":
+    case "Baixa produtividade":
+      return FIELD;
+    default: {
+      const _e: never = g;
+      return _e;
+    }
+  }
+}
+
 export const SECTION_TITLES_PT: Record<keyof DiagnosticoReportSections, string> =
   {
     diagnosis: "Diagnóstico",
@@ -122,14 +198,72 @@ function maturityScore(answers: QuestionarioAnswers): number {
       throw new Error(`Histórico inválido: ${_e}`);
     }
   }
+  switch (answers.soilAnalysisFrequency) {
+    case "Nunca":
+      s += 0;
+      break;
+    case "Esporádica":
+      s += 1;
+      break;
+    case "A cada 2–3 anos":
+      s += 2;
+      break;
+    case "Todo ano":
+      s += 3;
+      break;
+    default: {
+      const _e: never = answers.soilAnalysisFrequency;
+      throw new Error(`Frequência de análise inválida: ${_e}`);
+    }
+  }
+  return s;
+}
+
+/** Capacidade operacional (máquinas + equipe) — viabilidade de executar recomendações. */
+export function operationalScore(answers: QuestionarioAnswers): number {
+  let s = 0;
+  switch (answers.machineryCapacity) {
+    case "Terceirizo / não tenho":
+      s += 0;
+      break;
+    case "Frota básica":
+      s += 1;
+      break;
+    case "Frota própria com tecnologia":
+      s += 2;
+      break;
+    default: {
+      const _e: never = answers.machineryCapacity;
+      throw new Error(`Máquinas inválido: ${_e}`);
+    }
+  }
+  switch (answers.technicalTeam) {
+    case "Sem apoio técnico":
+      s += 0;
+      break;
+    case "Consultoria pontual":
+      s += 1;
+      break;
+    case "Consultoria fixa":
+      s += 2;
+      break;
+    case "Equipe própria":
+      s += 3;
+      break;
+    default: {
+      const _e: never = answers.technicalTeam;
+      throw new Error(`Equipe técnica inválido: ${_e}`);
+    }
+  }
   return s;
 }
 
 export function classifyProducerTier(answers: QuestionarioAnswers): ProducerTier {
-  const score = maturityScore(answers);
-  if (score <= 2) return "Fundação Produtiva";
-  if (score <= 4) return "Desenvolvimento Técnico";
-  if (score <= 6) return "Eficiência Produtiva";
+  // Combina maturidade técnica (máx 11) e capacidade operacional (máx 5).
+  const score = maturityScore(answers) + operationalScore(answers);
+  if (score <= 4) return "Fundação Produtiva";
+  if (score <= 8) return "Desenvolvimento Técnico";
+  if (score <= 12) return "Eficiência Produtiva";
   return "Alta Performance";
 }
 
@@ -153,30 +287,37 @@ function tierStyle(tier: ProducerTier): TierStyle {
 }
 
 
+/**
+ * Priorização/inferência quando o produtor não nomeia o gargalo ("Não sabe").
+ * Manual v3: variabilidade alta tem prioridade ("sem AP + variabilidade → problema
+ * de manejo"); demais casos seguem o impacto declarado. Nematoide/compactação só
+ * entram quando há sinal explícito (gargalo declarado), respeitado em resolveEffectiveGargalo.
+ */
+export function prioritizeGargalo(answers: QuestionarioAnswers): Gargalo {
+  const { mainBottleneckImpact, georeferencedSampling, fieldVariability } =
+    answers;
+  const noAP = georeferencedSampling === "Não";
+  const highVar = fieldVariability === "Alta (talhões muito diferentes)";
+
+  // Variabilidade alta = prioridade: ponto de partida é leitura fina (precisão).
+  if (highVar) {
+    return noAP ? "Fertilidade/Calagem" : "Baixa produtividade";
+  }
+  if (mainBottleneckImpact === "Custo") return "Custo alto de adubo";
+  if (mainBottleneckImpact === "Operação") return "Compactação";
+  if (mainBottleneckImpact === "Utilizar da Tecnologia") return "Baixa produtividade";
+  if (mainBottleneckImpact === "Produtividade") return "Baixa produtividade";
+  if (mainBottleneckImpact === "Todos") {
+    return noAP ? "Fertilidade/Calagem" : "Baixa produtividade";
+  }
+  return "Baixa produtividade";
+}
+
 export function resolveEffectiveGargalo(answers: QuestionarioAnswers): Gargalo {
   if (answers.mainBottleneck !== "Não sabe exatamente") {
     return answers.mainBottleneck;
   }
-  const { mainBottleneckImpact, georeferencedSampling } = answers;
-  if (mainBottleneckImpact === "Custo") {
-    return "Custo alto de adubo";
-  }
-  if (mainBottleneckImpact === "Operação") {
-    return "Compactação";
-  }
-  if (mainBottleneckImpact === "Utilizar da Tecnologia") {
-    return "Baixa produtividade";
-  }
-  if (mainBottleneckImpact === "Produtividade") {
-    return "Baixa produtividade";
-  }
-  if (mainBottleneckImpact === "Todos") {
-    if (georeferencedSampling === "Não") {
-      return "Fertilidade/Calagem";
-    }
-    return "Baixa produtividade";
-  }
-  return "Baixa produtividade";
+  return prioritizeGargalo(answers);
 }
 
 export function dominantPainTitle(
@@ -232,14 +373,30 @@ function baseScHaForGargalo(g: Gargalo): number {
   }
 }
 
+/**
+ * Gap recuperável (sc/ha) a partir da produtividade atual vs meta de referência.
+ * Retorna null quando não há meta para a cultura principal ou produtividade informada.
+ */
+export function yieldGapScHa(answers: QuestionarioAnswers): number | null {
+  const target = TARGET_YIELD_SC_HA[answers.mainCulture];
+  if (!target || !answers.currentYieldScHa || answers.currentYieldScHa <= 0) {
+    return null;
+  }
+  const gap = Math.max(0, target - answers.currentYieldScHa);
+  return Math.round(gap * RECOVERABLE_GAP_FACTOR);
+}
+
 export function estimateProductiveLossScHa(
   answers: QuestionarioAnswers,
   effectiveGargalo: Gargalo,
 ): number {
-  let sc = baseScHaForGargalo(effectiveGargalo);
-  if (answers.urgencyToResolve === "Sim") sc += 5;
-  if (answers.triedBefore === "Sim e não funcionou") sc += 4;
-  if (answers.mainBottleneckImpact === "Todos") sc += 3;
+  const base = baseScHaForGargalo(effectiveGargalo);
+  const anchored = yieldGapScHa(answers);
+  // Quando há produtividade informada, ancora no gap real (média com a base por tema).
+  let sc = anchored != null ? (base + anchored) / 2 : base;
+  if (answers.urgencyToResolve === "Sim") sc += 3;
+  if (answers.triedBefore === "Sim e não funcionou") sc += 3;
+  if (answers.fieldVariability === "Alta (talhões muito diferentes)") sc += 3;
   if (answers.georeferencedSampling === "Não") sc += 2;
   return Math.min(40, Math.max(10, Math.round(sc)));
 }
@@ -306,9 +463,24 @@ function buildDiagnosis(
       ? ` Como o gargalo não foi nomeado com precisão, a leitura técnica ancora o plano em "${getReportTypeForGargalo(effective)}" até confirmar causa com dados.`
       : "";
 
+  const factor = limitingFactor(effective);
+  const factorLine =
+    factor === "Químico"
+      ? "Lendo o solo como sistema integrado, o fator que mais limita aqui é químico (fertilidade/correção)."
+      : factor === "Físico"
+        ? "Lendo o solo como sistema integrado, o fator que mais limita aqui é físico (estrutura/compactação/implantação)."
+        : "Lendo o solo como sistema integrado, o fator que mais limita aqui é biológico (pressão de nematoides).";
+
+  const analysisLine =
+    answers.soilAnalysisFrequency === "Nunca" ||
+    answers.soilAnalysisFrequency === "Esporádica"
+      ? " A baixa frequência de análise de solo aumenta o risco de decidir sem evidência."
+      : "";
+
   return [
-    `Leitura da operação em ${mun}: ${answers.farmName}, área total declarada ${area} ha, culturas ${cultures}.`,
+    `Leitura da operação em ${mun}: ${answers.farmName}, área total declarada ${area} ha, culturas ${cultures} (principal: ${answers.mainCulture}, produtividade atual ~${answers.currentYieldScHa.toLocaleString("pt-BR")} sc/ha).`,
     `Nos quatro pilares, destacam-se: ${pillarMaturity}; ${pillarOps}; ${pillarData}.`,
+    `${factorLine}${analysisLine}`,
     `${tierLine}${effectiveNote}`,
   ].join(" ");
 }
@@ -345,9 +517,18 @@ function buildMainPainParagraph(
       ? `${why} Em níveis iniciais de controle, a prioridade é reduzir incerteza com diagnóstico mínimo viável e execução simples.`
       : `${why}`;
 
+  // Relação com manejo (manual §6: causa → efeito → relação com manejo).
+  const manejo =
+    answers.georeferencedSampling === "Não"
+      ? "Relação com manejo: sem amostragem georreferenciada, a decisão trata a área como homogênea e mascara a causa por talhão."
+      : answers.variableRate === "Não"
+        ? "Relação com manejo: há leitura de campo, mas sem taxa variável a correção não chega na dose certa por zona."
+        : "Relação com manejo: a base de precisão existe; o ganho está em refinar prescrição e fechar o ciclo de decisão.";
+
   return [
-    `Dor principal (única prioridade narrativa): ${dominantTitle}.`,
-    explain,
+    `Dor principal (única prioridade): ${dominantTitle}.`,
+    `Causa provável e efeito no sistema: ${explain}`,
+    manejo,
     impactRef,
   ].join(" ");
 }
@@ -420,9 +601,17 @@ function buildSolution(
       ? "manter governança de dados (mapas, análises, resultados) como trilho de melhoria contínua"
       : "organizar mapas e resultados para fechar ciclo de decisão (o que foi feito → o que respondeu)";
 
+  const sol = solutionForGargalo(effective);
+  const ops = operationalScore(answers);
+  const execNote =
+    ops <= 1
+      ? "Como a estrutura de máquinas/equipe é enxuta, parte da execução pode ser apoiada pela 250K para não travar o plano."
+      : "A estrutura de máquinas/equipe disponível permite internalizar a execução com acompanhamento técnico.";
+
   return [
-    `Solução direta (não genérica): conectar causa (${effective}) ao ${plan}.`,
+    `Solução direta (não genérica): conectar a causa (${effective}) ao ${plan}, ancorado na ${sol.name} do ecossistema 250K.`,
     `Trilho técnico recomendado: ${tech}; ${tv}; ${hist}.`,
+    execNote,
     tier === "Fundação Produtiva" || tier === "Desenvolvimento Técnico"
       ? "Em estágio inicial, evite pacotes amplos: escolha 1–2 talhões piloto, meça resposta e replique o padrão vencedor."
       : "Em estágio avançado, priorize otimização: reduzir variância entre talhões e refinar prescrição com evidência.",
@@ -464,6 +653,10 @@ export function buildDiagnosticoSections(
   productiveLossScHa: number;
   financialRPerHa: number;
   pricing: ReturnType<typeof pickPricingCulture>;
+  limitingFactor: LimitingFactor;
+  recommendedSolution: RecommendedSolution;
+  targetYieldScHa?: number;
+  yieldGapScHa?: number;
 } {
   const tier = classifyProducerTier(answers);
   const effective = resolveEffectiveGargalo(answers);
@@ -474,6 +667,10 @@ export function buildDiagnosticoSections(
     productiveLossScHa,
     pricing.pricePerScR,
   );
+  const factor = limitingFactor(effective);
+  const recommendedSolution = solutionForGargalo(effective);
+  const targetYield = TARGET_YIELD_SC_HA[answers.mainCulture];
+  const gap = yieldGapScHa(answers);
 
   const sections: DiagnosticoReportSections = {
     diagnosis: buildDiagnosis(answers, tier, effective),
@@ -503,6 +700,10 @@ export function buildDiagnosticoSections(
     productiveLossScHa,
     financialRPerHa,
     pricing,
+    limitingFactor: factor,
+    recommendedSolution,
+    targetYieldScHa: targetYield,
+    yieldGapScHa: gap ?? undefined,
   };
 }
 
@@ -556,6 +757,11 @@ export function generateDiagnosticoReport(
     financialImpactRPerHa: built.financialRPerHa,
     pricingCultureBasis: built.pricing.basis,
     farmTotalLossRApprox,
+    limitingFactor: built.limitingFactor,
+    recommendedSolution: built.recommendedSolution,
+    currentYieldScHa: answers.currentYieldScHa,
+    targetYieldScHa: built.targetYieldScHa,
+    yieldGapScHa: built.yieldGapScHa,
     sections: built.sections,
   };
 }

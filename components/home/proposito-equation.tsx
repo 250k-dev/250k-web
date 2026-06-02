@@ -103,7 +103,7 @@ export function PropositoEquation({ className }: { className?: string }) {
 
   return (
     <figure className={cn("px-5 sm:px-0", className)}>
-      <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-4 sm:gap-x-6 rounded-2xl bg-brand-orange/10 px-8 py-6">
+      <div className="inline-flex w-full max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-4 rounded-2xl bg-brand-orange/10 px-4 py-5 sm:gap-x-6 sm:px-8 sm:py-6">
         <YieldChip value="85" unit="sc/ha" label="soja" />
         <Operator>+</Operator>
         <YieldChip value="165" unit="sc/ha" label="milho" />

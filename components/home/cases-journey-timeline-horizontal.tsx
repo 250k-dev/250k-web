@@ -347,6 +347,50 @@ function TimelineStepItem({
   );
 }
 
+function MobileJourneyStep({ step, index }: { step: Step; index: number }) {
+  const { Icon } = step;
+  const greenPhase = index < 3;
+
+  return (
+    <li className="rounded-2xl border border-border/60 bg-card/60 p-4">
+      <div className="flex items-start gap-3">
+        <span
+          className={cn(
+            "flex size-10 shrink-0 items-center justify-center rounded-lg border shadow-sm",
+            greenPhase
+              ? "border-brand-green/30 bg-brand-green/12 text-brand-green"
+              : "border-brand-orange/30 bg-brand-orange/12 text-brand-orange",
+          )}
+          aria-hidden
+        >
+          <Icon className="size-5" strokeWidth={1.35} />
+        </span>
+        <div className="min-w-0 flex-1 space-y-1">
+          <span
+            className={cn(
+              "inline-flex rounded-full px-2 py-0.5 text-[0.65rem] font-semibold text-white",
+              greenPhase ? "bg-brand-green" : "bg-brand-orange",
+            )}
+          >
+            Etapa {index + 1}
+          </span>
+          <h3
+            className={cn(
+              "text-base font-bold leading-snug",
+              greenPhase ? "text-brand-green" : "text-brand-orange",
+            )}
+          >
+            {step.title}
+          </h3>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {step.description}
+          </p>
+        </div>
+      </div>
+    </li>
+  );
+}
+
 export function CasesJourneyTimelineHorizontal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
@@ -360,37 +404,48 @@ export function CasesJourneyTimelineHorizontal() {
   return (
     <div
       ref={containerRef}
-      className="relative mx-auto flex w-full flex-col py-0 pt-24"
+      className="relative mx-auto flex w-full min-w-0 flex-col py-0 md:pt-24"
     >
-      {/* trilho horizontal */}
-      <div
-        className="pointer-events-none absolute inset-x-0 z-0 hidden md:block"
-        style={{ top: "calc(50% - 2.5rem)", height: "5rem" }}
-        aria-hidden
-      >
-        <JourneySpine
-          scrollXProgress={progress}
-          reduceMotion={!!reduceMotion}
-        />
-      </div>
-
       <ol
-        className="relative z-10 grid w-full"
-        style={{
-          gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))`,
-        }}
+        className="relative z-10 flex flex-col gap-4 md:hidden"
         aria-label="Jornada em etapas"
       >
         {STEPS.map((step, index) => (
-          <TimelineStepItem
-            key={step.title}
-            step={step}
-            index={index}
+          <MobileJourneyStep key={step.title} step={step} index={index} />
+        ))}
+      </ol>
+
+      <div className="relative hidden md:block">
+        {/* trilho horizontal */}
+        <div
+          className="pointer-events-none absolute inset-x-0 z-0"
+          style={{ top: "calc(50% - 2.5rem)", height: "5rem" }}
+          aria-hidden
+        >
+          <JourneySpine
             scrollXProgress={progress}
             reduceMotion={!!reduceMotion}
           />
-        ))}
-      </ol>
+        </div>
+
+        <ol
+          className="relative z-10 grid w-full"
+          style={{
+            gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))`,
+          }}
+          aria-label="Jornada em etapas"
+        >
+          {STEPS.map((step, index) => (
+            <TimelineStepItem
+              key={step.title}
+              step={step}
+              index={index}
+              scrollXProgress={progress}
+              reduceMotion={!!reduceMotion}
+            />
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }

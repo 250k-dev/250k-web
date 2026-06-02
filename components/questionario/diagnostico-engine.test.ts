@@ -7,6 +7,9 @@ import {
   PRECO_SACA_MILHO_R,
   PRECO_SACA_SOJA_R,
   resolveEffectiveGargalo,
+  limitingFactor,
+  solutionForGargalo,
+  yieldGapScHa,
 } from "./diagnostico-engine";
 import type { QuestionarioAnswers } from "./questionario-types";
 
@@ -15,13 +18,19 @@ const base: QuestionarioAnswers = {
   municipality: "Uberaba",
   totalAreaHa: 500,
   cultures: ["Soja"],
+  mainCulture: "Soja",
+  currentYieldScHa: 60,
   decisionMaker: "Eu",
   mainBottleneck: "Baixa produtividade",
   mainBottleneckImpact: "Produtividade",
+  fieldVariability: "Média",
   triedBefore: "Nunca tratou de forma técnica",
   georeferencedSampling: "Não",
   variableRate: "Não",
+  soilAnalysisFrequency: "Esporádica",
   organizedHistory: "Não",
+  machineryCapacity: "Frota básica",
+  technicalTeam: "Consultoria pontual",
   willingAdjustManagement: "Sim",
   urgencyToResolve: "Próxima safra",
   clientName: "Cliente",
@@ -94,6 +103,61 @@ describe("resolveEffectiveGargalo", () => {
       ),
     ).toBe("Custo alto de adubo");
   });
+
+  it("Não sabe + variabilidade alta tem prioridade sobre o impacto", () => {
+    expect(
+      resolveEffectiveGargalo(
+        answers({
+          mainBottleneck: "Não sabe exatamente",
+          mainBottleneckImpact: "Custo",
+          fieldVariability: "Alta (talhões muito diferentes)",
+          georeferencedSampling: "Não",
+        }),
+      ),
+    ).toBe("Fertilidade/Calagem");
+  });
+});
+
+describe("limitingFactor (solo como sistema integrado)", () => {
+  it("classifica químico/físico/biológico", () => {
+    expect(limitingFactor("Fertilidade/Calagem")).toBe("Químico");
+    expect(limitingFactor("Custo alto de adubo")).toBe("Químico");
+    expect(limitingFactor("Compactação")).toBe("Físico");
+    expect(limitingFactor("Nematoides")).toBe("Biológico");
+  });
+});
+
+describe("solutionForGargalo (conexão com ecossistema 250K)", () => {
+  it("custo de adubo → Finance-K", () => {
+    expect(solutionForGargalo("Custo alto de adubo")).toMatchObject({
+      id: "finance-k",
+      href: "/solucoes/finance-k",
+    });
+  });
+  it("compactação → Solo Chec-K", () => {
+    expect(solutionForGargalo("Compactação").id).toBe("solo-chec-k");
+  });
+  it("baixa produtividade → Field-K", () => {
+    expect(solutionForGargalo("Baixa produtividade").id).toBe("field-k");
+  });
+});
+
+describe("yieldGapScHa (perda ancorada na produtividade real)", () => {
+  it("Soja meta 85: atual 60 → gap recuperável ~10 (40% de 25)", () => {
+    expect(yieldGapScHa(answers({ mainCulture: "Soja", currentYieldScHa: 60 }))).toBe(
+      10,
+    );
+  });
+  it("sem meta para a cultura → null", () => {
+    expect(
+      yieldGapScHa(answers({ mainCulture: "Algodão", currentYieldScHa: 100 })),
+    ).toBeNull();
+  });
+  it("produtividade acima da meta → gap 0", () => {
+    expect(
+      yieldGapScHa(answers({ mainCulture: "Soja", currentYieldScHa: 90 })),
+    ).toBe(0);
+  });
 });
 
 describe("estimateProductiveLossScHa", () => {
@@ -123,7 +187,7 @@ describe("generateDiagnosticoReport", () => {
     const r = generateDiagnosticoReport(base);
     expect(r.sections).toBeDefined();
     expect(r.sections?.diagnosis.length).toBeGreaterThan(40);
-    expect(r.sections?.mainPain).toContain("única prioridade narrativa");
+    expect(r.sections?.mainPain).toContain("única prioridade");
     expect(r.productiveLossScHa).toBeDefined();
     expect(r.financialImpactRPerHa).toBe(
       financialImpactRPerHa(r.productiveLossScHa ?? 0, PRECO_SACA_SOJA_R),
@@ -139,10 +203,21 @@ describe("generateDiagnosticoReport", () => {
   });
 
   it("só Milho usa preço do milho", () => {
-    const r = generateDiagnosticoReport(answers({ cultures: ["Milho"] }));
+    const r = generateDiagnosticoReport(
+      answers({ cultures: ["Milho"], mainCulture: "Milho" }),
+    );
     expect(r.pricingCultureBasis).toBe("Milho");
     expect(r.financialImpactRPerHa).toBe(
       financialImpactRPerHa(r.productiveLossScHa ?? 0, PRECO_SACA_MILHO_R),
     );
+  });
+
+  it("expõe fator limitante e solução recomendada do ecossistema", () => {
+    const r = generateDiagnosticoReport(
+      answers({ mainBottleneck: "Custo alto de adubo" }),
+    );
+    expect(r.limitingFactor).toBe("Químico");
+    expect(r.recommendedSolution?.id).toBe("finance-k");
+    expect(r.recommendedSolution?.href).toBe("/solucoes/finance-k");
   });
 });
