@@ -19,9 +19,9 @@ async function fetchBcbSeries(series: number): Promise<number | null> {
 export interface CommoditiesData {
   /** USD/BRL (R$). */
   usdBrl: number | null;
-  /** Soja em R$/saca 60kg. */
+  /** Soja em R$/saca 60kg (Indicador CEPEA/ESALQ). */
   soja: number | null;
-  /** Milho em R$/saca 60kg. */
+  /** Milho em R$/saca 60kg (Indicador CEPEA/ESALQ). */
   milho: number | null;
   algodao: number | null;
   cafe: number | null;
@@ -31,43 +31,27 @@ export interface CommoditiesData {
 /** Dólar: PTAX venda (série 1 do BCB SGS). */
 const USD_BRL_SERIES = 1;
 
-/**
- * Fallback manual (R$/saca 60kg) — usado quando o CEPEA está indisponível.
- * O CEPEA é a referência do mercado (Soja CEPEA/ESALQ–Paranaguá, Milho ESALQ/B3),
- * mas não tem API pública e bloqueia requisições de servidor. Atualize estes
- * valores conforme o indicador do CEPEA.
- * Última referência manual: jun/2026.
- */
-const SOJA_FALLBACK_R_SACA = 130;
-const MILHO_FALLBACK_R_SACA = 65;
-
-/** IDs do indicador no widget do CEPEA (ajustar se necessário). */
-const CEPEA_INDICADOR = { SOJA: 92, MILHO: 77 } as const;
 
 /**
- * Tenta obter o indicador diário do CEPEA (R$/saca) pelo widget público.
- * Best-effort: o CEPEA frequentemente bloqueia servidores — em caso de falha
- * retorna null e o chamador usa o fallback manual.
+ * Preço do grão em R$/saca 60kg via melhorcambio.com, que espelha o Indicador
+ * CEPEA/ESALQ (mesmo valor do site do CEPEA, porém acessível por servidor).
+ * Best-effort: em qualquer falha retorna null e o chamador usa o fallback manual.
  */
-async function fetchCepeaIndicator(idIndicador: number): Promise<number | null> {
+async function fetchCepeaSacaBrl(
+  produto: "soja" | "milho",
+): Promise<number | null> {
   try {
-    const url =
-      "https://www.cepea.esalq.usp.br/br/widgetproduto.js.php" +
-      `?fonte=arial&tamanho=10&largura=400&corfundo=dbd6b2&cortexto=333333&corlinha=ede9d0&id_indicador%5B%5D=${idIndicador}`;
-    const res = await fetch(url, {
+    const res = await fetch(`https://www.melhorcambio.com/${produto}-hoje`, {
       next: { revalidate: 3600 },
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        Referer: "https://www.cepea.esalq.usp.br/",
-      },
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
     });
     if (!res.ok) return null;
-    const text = await res.text();
-    // Procura o valor "R$ 1.234,56" na tabela do widget.
-    const m = text.match(/R\$\s*([\d.]+,\d{2})/);
+    const html = await res.text();
+    // Valor do indicador: <input ... value="64,51" class="text-verde" ...>
+    const m = html.match(/value="([\d.,]+)"\s+class="text-verde"/i);
     if (!m) return null;
     const value = Number(m[1].replace(/\./g, "").replace(",", "."));
-    return Number.isFinite(value) ? value : null;
+    return Number.isFinite(value) && value > 0 ? value : null;
   } catch {
     return null;
   }
@@ -76,14 +60,14 @@ async function fetchCepeaIndicator(idIndicador: number): Promise<number | null> 
 export async function getCommodities(): Promise<CommoditiesData> {
   const [usdBrl, sojaLive, milhoLive] = await Promise.all([
     fetchBcbSeries(USD_BRL_SERIES),
-    fetchCepeaIndicator(CEPEA_INDICADOR.SOJA),
-    fetchCepeaIndicator(CEPEA_INDICADOR.MILHO),
+    fetchCepeaSacaBrl("soja"),
+    fetchCepeaSacaBrl("milho"),
   ]);
 
   return {
     usdBrl,
-    soja: sojaLive ?? SOJA_FALLBACK_R_SACA,
-    milho: milhoLive ?? MILHO_FALLBACK_R_SACA,
+    soja: sojaLive ?? 0,
+    milho: milhoLive ?? 0,
     algodao: null,
     cafe: null,
     acucar: null,
