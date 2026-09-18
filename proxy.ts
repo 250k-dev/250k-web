@@ -29,8 +29,9 @@ export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isAdminRoute = path.startsWith("/admin");
   const isAdminLogin = path.startsWith("/admin/login");
+  const isAdminResetPassword = path.startsWith("/admin/reset-password");
 
-  if (isAdminRoute && !isAdminLogin) {
+  if (isAdminRoute && !isAdminLogin && !isAdminResetPassword) {
     const {
       data: { user },
     } = await supabase.auth.getUser();

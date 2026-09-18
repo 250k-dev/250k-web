@@ -88,7 +88,7 @@ export function AdminLoginForm() {
     try {
       const { error: err } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: `${window.location.origin}/admin/dashboard` },
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/admin/dashboard` },
       });
       if (err) {
         setServerError(err.message);
@@ -112,7 +112,7 @@ export function AdminLoginForm() {
     setLoading(true);
     try {
       const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/admin/dashboard`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/admin/reset-password`,
       });
       if (err) {
         toast.error(err.message);
