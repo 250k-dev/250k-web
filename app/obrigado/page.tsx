@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { ObrigadoView } from "./obrigado-view";
 
 export const metadata: Metadata = {
-  title: "Cadastro recebido",
+  title: {
+    absolute: "Cadastro recebido | 250K Consultoria Agrícola",
+  },
   robots: { index: false, follow: false },
 };
 

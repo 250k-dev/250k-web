@@ -9,6 +9,7 @@ import {
 } from "@tabler/icons-react";
 import LogoIcon from "@/assets/logo-icon";
 import LogoLabel from "@/assets/logo-label";
+import { whatsappUrl } from "@/lib/whatsapp";
 
 const footerLinks = [
   { href: "/sobre", label: "Sobre" },
@@ -106,7 +107,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://wa.me/5566992206117"
+                  href={whatsappUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"

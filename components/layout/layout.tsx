@@ -39,10 +39,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const isAdmin = pathname?.startsWith(ADMIN_PATH);
   const isLandingPage = isLandingPagePath(pathname ?? null);
   const isQuestionario = pathname?.startsWith("/questionario") ?? false;
+  const isObrigado = pathname === "/obrigado";
   const isHome = pathname === "/";
 
   if (isStudio || isAdmin || isLandingPage) {
     return <div className="flex flex-1 flex-col min-h-0">{children}</div>;
+  }
+
+  if (isObrigado) {
+    return <div className="flex min-h-dvh flex-1 flex-col">{children}</div>;
   }
 
   if (isQuestionario) {

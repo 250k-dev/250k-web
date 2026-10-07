@@ -1,4 +1,5 @@
 import { IconMail, IconPhone, IconMapPin } from "@tabler/icons-react";
+import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 
 const contactItems = [
   {
@@ -11,7 +12,7 @@ const contactItems = [
     icon: IconPhone,
     label: "Telefone",
     value: "(66) 9.9220-6117",
-    href: "tel:+5566992206117",
+    href: `tel:+${WHATSAPP_NUMBER}`,
   },
   {
     icon: IconMapPin,
