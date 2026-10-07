@@ -22,6 +22,7 @@ const TOP_LEVEL_ROUTES = [
   "legal",
   "eventos",
   "treinamentos",
+  "obrigado",
   "admin",
   "studio",
 ];

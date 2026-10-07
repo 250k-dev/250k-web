@@ -40,6 +40,7 @@ import {
   urgenciaOptions,
 } from "./questionario-types";
 import { generateGenericReport } from "./report-generator";
+import { submitQuestionarioLead } from "@/actions/leads";
 
 function normalizeWhatsapp(value: string): string {
   return value.replace(/\D/g, "");
@@ -369,6 +370,7 @@ export function QuestionarioForm() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progressPortalReady, setProgressPortalReady] = useState(false);
   const [progressFillRevealed, setProgressFillRevealed] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const stepId = stepOrder[stepIndex];
   const totalSteps = stepOrder.length;
@@ -517,11 +519,16 @@ export function QuestionarioForm() {
 
   const handleGenerateReport = form.handleSubmit(async (data) => {
     setIsProcessing(true);
+    setSubmitError(null);
 
     try {
-      await new Promise((r) => setTimeout(r, 1100));
-
       const answers = data as unknown as QuestionarioAnswers;
+      const leadResult = await submitQuestionarioLead(answers);
+      if (!leadResult.success) {
+        setSubmitError(leadResult.message);
+        return;
+      }
+
       const report: QuestionarioReport = generateGenericReport(answers);
       const payload = { version: 2 as const, answers, report };
       sessionStorage.setItem(QUESTIONARIO_SESSION_KEY, JSON.stringify(payload));
@@ -1307,6 +1314,11 @@ export function QuestionarioForm() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-background/85 backdrop-blur-md supports-backdrop-filter:bg-background/70 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-4px_24px_-8px_rgba(0,0,0,0.12)] dark:shadow-[0_-4px_24px_-8px_rgba(0,0,0,0.35)]">
+        {isLastStep && submitError ? (
+          <p className="px-4 pb-2 text-center text-sm text-destructive">
+            {submitError}
+          </p>
+        ) : null}
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 md:px-6">
           <Button
             type="button"
